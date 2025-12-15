@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { nanoid } from "nanoid";
+import { sendVerificationEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -25,17 +27,24 @@ export async function POST(request: NextRequest) {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const verificationToken = nanoid(32);
 
     const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         name,
+        emailVerified: false,
+        verificationToken,
       },
     });
 
+    // Send verification email
+    await sendVerificationEmail(email, verificationToken);
+
     return NextResponse.json(
       {
+        message: "Account created! Please check your email to verify your account.",
         user: {
           id: user.id,
           email: user.email,

@@ -53,3 +53,4 @@ prisma/*.db-journal
 
 #config md files
 *.md
+.env*.local
