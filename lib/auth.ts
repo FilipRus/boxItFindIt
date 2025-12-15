@@ -36,7 +36,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         // Check if email is verified
         if (!user.emailVerified) {
-          throw new Error("Please verify your email before signing in");
+          // Return null to fail authentication
+          // The error message will be shown on the signin page
+          return null;
         }
 
         return {

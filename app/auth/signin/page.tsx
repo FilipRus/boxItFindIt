@@ -25,7 +25,19 @@ export default function SignIn() {
       });
 
       if (result?.error) {
-        setError("Invalid email or password");
+        // Check if user exists but email not verified
+        const checkUser = await fetch("/api/auth/check-user", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        const userData = await checkUser.json();
+
+        if (userData.exists && !userData.verified) {
+          setError("Please verify your email address before signing in. Check your inbox for the verification link.");
+        } else {
+          setError("Invalid email or password");
+        }
       } else {
         router.push("/dashboard");
         router.refresh();
