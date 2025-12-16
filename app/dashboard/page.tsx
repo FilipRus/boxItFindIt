@@ -146,26 +146,28 @@ export default function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Search and New Box button at top */}
-        <div className="mb-6 sm:mb-8">
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
-            <form onSubmit={handleSearch} className="flex-1">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search boxes and items..."
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base"
-              />
-            </form>
-            <button
-              onClick={() => setShowNewBoxModal(true)}
-              className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-lg text-base"
-            >
-              New Box
-            </button>
+        {/* Search and New Box button at top - only show when boxes exist */}
+        {!loading && boxes.length > 0 && (
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <form onSubmit={handleSearch} className="flex-1">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search boxes and items..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base"
+                />
+              </form>
+              <button
+                onClick={() => setShowNewBoxModal(true)}
+                className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-lg text-base"
+              >
+                New Box
+              </button>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Boxes grid or empty state */}
         {loading ? (

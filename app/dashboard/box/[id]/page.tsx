@@ -259,25 +259,29 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{box.name}</h1>
-            <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2 sm:gap-3">
-              <button
-                onClick={generateQRCode}
-                className="w-full sm:w-auto bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition font-medium shadow-md text-base"
-              >
-                Generate QR Code
-              </button>
-              <button
-                onClick={() => setShowAddItemModal(true)}
-                className="w-full sm:w-auto bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-md text-base"
-              >
-                Add Item
-              </button>
-            </div>
+            {/* Show action buttons only when items exist */}
+            {box.items.length > 0 && (
+              <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2 sm:gap-3">
+                <button
+                  onClick={generateQRCode}
+                  className="w-full sm:w-auto bg-green-600 text-white px-5 py-3 rounded-lg hover:bg-green-700 transition font-medium shadow-md text-base"
+                >
+                  Generate QR Code
+                </button>
+                <button
+                  onClick={() => setShowAddItemModal(true)}
+                  className="w-full sm:w-auto bg-blue-600 text-white px-5 py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-md text-base"
+                >
+                  Add Item
+                </button>
+              </div>
+            )}
           </div>
 
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
-            <p className="text-sm sm:text-base text-gray-600">{box.items.length} items in this box</p>
-            {box.items.length > 0 && (
+          {/* Show item count and view toggle only when items exist */}
+          {box.items.length > 0 && (
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+              <p className="text-sm sm:text-base text-gray-600">{box.items.length} items in this box</p>
               <div className="flex gap-1 bg-gray-100 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode("grid")}
@@ -304,8 +308,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   </svg>
                 </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {box.items.length === 0 ? (
