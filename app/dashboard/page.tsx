@@ -146,18 +146,8 @@ export default function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        {/* Search and New Box button at top */}
         <div className="mb-6 sm:mb-8">
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-              <h3 className="text-gray-500 text-xs sm:text-sm font-medium">Total Boxes</h3>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{totalBoxes}</p>
-            </div>
-            <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-              <h3 className="text-gray-500 text-xs sm:text-sm font-medium">Total Items</h3>
-              <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{totalItems}</p>
-            </div>
-          </div>
-
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
             <form onSubmit={handleSearch} className="flex-1">
               <input
@@ -177,6 +167,7 @@ export default function Dashboard() {
           </div>
         </div>
 
+        {/* Boxes grid or empty state */}
         {loading ? (
           <div className="text-center py-12">
             <p className="text-gray-600">Loading boxes...</p>
@@ -192,7 +183,7 @@ export default function Dashboard() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
             {boxes.map((box) => (
               <Link
                 key={box.id}
@@ -229,6 +220,20 @@ export default function Dashboard() {
                 <p className="text-gray-600">{box._count?.items || box.items?.length || 0} items</p>
               </Link>
             ))}
+          </div>
+        )}
+
+        {/* Stats at bottom */}
+        {!loading && boxes.length > 0 && (
+          <div className="grid grid-cols-2 gap-3 sm:gap-4">
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+              <h3 className="text-gray-500 text-xs sm:text-sm font-medium">Total Boxes</h3>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{totalBoxes}</p>
+            </div>
+            <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+              <h3 className="text-gray-500 text-xs sm:text-sm font-medium">Total Items</h3>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{totalItems}</p>
+            </div>
           </div>
         )}
       </main>
