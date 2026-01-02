@@ -1,4 +1,4 @@
-import { v2 as cloudinary } from "cloudinary";
+import { v2 as cloudinary, UploadApiResponse, UploadApiErrorResponse } from "cloudinary";
 
 // Configure Cloudinary
 cloudinary.config({
@@ -18,7 +18,7 @@ export async function uploadToCloudinary(
     const buffer = Buffer.from(bytes);
 
     // Upload to Cloudinary
-    const result = await new Promise<any>((resolve, reject) => {
+    const result = await new Promise<UploadApiResponse>((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
@@ -30,16 +30,17 @@ export async function uploadToCloudinary(
               { fetch_format: "auto" }, // Auto format (WebP for supported browsers)
             ],
           },
-          (error, result) => {
+          (error: UploadApiErrorResponse | undefined, result: UploadApiResponse | undefined) => {
             if (error) reject(error);
-            else resolve(result);
+            else if (result) resolve(result);
+            else reject(new Error("Upload failed with no result"));
           }
         )
         .end(buffer);
     });
 
     return result.secure_url;
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Cloudinary upload error:", error);
     throw new Error("Failed to upload image");
   }
@@ -55,7 +56,7 @@ export async function deleteFromCloudinary(url: string): Promise<void> {
     const publicId = `${folder}/${filename}`;
 
     await cloudinary.uploader.destroy(publicId);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Cloudinary delete error:", error);
     // Don't throw error - just log it
   }

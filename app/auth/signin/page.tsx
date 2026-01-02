@@ -42,7 +42,7 @@ export default function SignIn() {
         router.push("/dashboard");
         router.refresh();
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setError("An error occurred during sign in");
     } finally {
       setLoading(false);

@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json({ boxes });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Get boxes error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ box }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Create box error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

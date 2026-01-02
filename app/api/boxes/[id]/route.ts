@@ -33,7 +33,7 @@ export async function GET(
     }
 
     return NextResponse.json({ box });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Get box error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -83,7 +83,7 @@ export async function PATCH(
     });
 
     return NextResponse.json({ box: updatedBox });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Update box error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -120,7 +120,7 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Delete box error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

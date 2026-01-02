@@ -73,7 +73,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       const data = await response.json();
       setBox(data.box);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching box:", error);
     } finally {
       setLoading(false);
@@ -95,7 +95,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       const data = await response.json();
       setQrCodeImage(data.qrCodeImage);
       setShowQRModal(true);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error generating QR code:", error);
     }
   };
@@ -142,7 +142,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
         if (fileInput) fileInput.value = '';
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error adding item:", error);
     } finally {
       setSubmitting(false);
@@ -193,7 +193,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         setEditingItem(null);
         setShowEditItemModal(false);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error updating item:", error);
     } finally {
       setSubmitting(false);
@@ -215,7 +215,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             : null
         );
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error deleting item:", error);
     }
   };

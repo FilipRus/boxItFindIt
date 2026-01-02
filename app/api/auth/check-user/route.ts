@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       exists: true,
       verified: user.emailVerified,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Check user error:", error);
     return NextResponse.json(
       { exists: false, verified: false },

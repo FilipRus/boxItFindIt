@@ -26,7 +26,7 @@ export async function GET(
     }
 
     return NextResponse.json({ box });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Get public box error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

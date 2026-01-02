@@ -53,7 +53,7 @@ function ResetPasswordForm() {
         // Redirect to signin with success message
         router.push("/auth/signin?message=password-reset");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);

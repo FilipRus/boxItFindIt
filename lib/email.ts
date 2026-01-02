@@ -50,7 +50,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     });
 
     return { success: true };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to send password reset email:", error);
     return { success: false, error };
   }
@@ -104,7 +104,7 @@ export async function sendVerificationEmail(email: string, token: string) {
     });
 
     return { success: true };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Failed to send verification email:", error);
     return { success: false, error };
   }

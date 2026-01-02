@@ -77,7 +77,7 @@ export async function POST(
     });
 
     return NextResponse.json({ item }, { status: 201 });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Create item error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

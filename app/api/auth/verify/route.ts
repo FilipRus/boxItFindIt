@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(
       new URL("/auth/signin?message=verified", request.url)
     );
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Verification error:", error);
     return NextResponse.redirect(
       new URL("/auth/signin?error=verification-failed", request.url)

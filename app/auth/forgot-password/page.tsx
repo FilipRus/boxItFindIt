@@ -32,7 +32,7 @@ export default function ForgotPassword() {
         setMessage(data.message);
         setEmail("");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);

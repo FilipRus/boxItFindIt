@@ -44,7 +44,7 @@ export default function PublicBoxView({
 
       const data = await response.json();
       setBox(data.box);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching box:", error);
       setError(true);
     } finally {

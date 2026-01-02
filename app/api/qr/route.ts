@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ qrCodeImage });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Generate QR code error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

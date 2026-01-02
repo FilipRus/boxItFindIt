@@ -91,7 +91,7 @@ export async function PATCH(
     });
 
     return NextResponse.json({ item: updatedItem });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Update item error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
@@ -135,7 +135,7 @@ export async function DELETE(
     });
 
     return NextResponse.json({ success: true });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Delete item error:", error);
     return NextResponse.json(
       { error: "Internal server error" },

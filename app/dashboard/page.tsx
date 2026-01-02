@@ -72,7 +72,7 @@ export default function Dashboard() {
 
       const data = await response.json();
       setBoxes(data.boxes || []);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error fetching boxes:", error);
     } finally {
       setLoading(false);
@@ -103,7 +103,7 @@ export default function Dashboard() {
         setNewBoxName("");
         setShowNewBoxModal(false);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error creating box:", error);
     } finally {
       setCreatingBox(false);
@@ -121,7 +121,7 @@ export default function Dashboard() {
       if (response.ok) {
         setBoxes(boxes.filter((box) => box.id !== id));
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error deleting box:", error);
     }
   };
