@@ -577,8 +577,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 <Image
                   src={qrCodeImage}
                   alt="QR Code"
-                  width={300}
-                  height={300}
+                  width={200}
+                  height={200}
                 />
               )}
             </div>

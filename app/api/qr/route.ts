@@ -20,7 +20,7 @@ export async function POST(request: NextRequest) {
 
     const url = `${origin}/box/${qrCode}`;
     const qrCodeImage = await QRCode.toDataURL(url, {
-      width: 500,
+      width: 200,
       margin: 2,
     });
 
