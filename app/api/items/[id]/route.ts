@@ -38,6 +38,24 @@ export async function PATCH(
     const category = formData.get("category") as string | null;
     const image = formData.get("image") as File | null;
     const deleteImage = formData.get("deleteImage") === "true";
+    const destinationBoxId = formData.get("destinationBoxId") as string | null;
+
+    // If moving to another box, verify ownership of destination box
+    if (destinationBoxId && destinationBoxId !== item.boxId) {
+      const destinationBox = await prisma.box.findFirst({
+        where: {
+          id: destinationBoxId,
+          userId: session.user.id,
+        },
+      });
+
+      if (!destinationBox) {
+        return NextResponse.json(
+          { error: "Destination box not found or access denied" },
+          { status: 404 }
+        );
+      }
+    }
 
     if (!name) {
       return NextResponse.json(
@@ -87,10 +105,14 @@ export async function PATCH(
         description,
         category,
         imagePath,
+        ...(destinationBoxId && { boxId: destinationBoxId }),
       },
     });
 
-    return NextResponse.json({ item: updatedItem });
+    return NextResponse.json({
+      item: updatedItem,
+      moved: destinationBoxId ? destinationBoxId !== item.boxId : false
+    });
   } catch (error) {
     console.error("Update item error:", error);
     return NextResponse.json(

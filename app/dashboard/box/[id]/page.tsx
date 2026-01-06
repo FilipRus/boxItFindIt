@@ -38,6 +38,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   const [submitting, setSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [availableBoxes, setAvailableBoxes] = useState<Array<{ id: string; name: string }>>([]);
+  const [selectedDestinationBoxId, setSelectedDestinationBoxId] = useState<string>("");
+  const [moveSuccessMessage, setMoveSuccessMessage] = useState(false);
 
   useEffect(() => {
     fetchBox();
@@ -77,6 +80,21 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       console.error("Error fetching box:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchAvailableBoxes = async () => {
+    try {
+      const response = await fetch('/api/boxes');
+      if (response.ok) {
+        const data = await response.json();
+        const otherBoxes = data.boxes
+          .filter((b: { id: string; name: string }) => b.id !== id)
+          .map((b: { id: string; name: string }) => ({ id: b.id, name: b.name }));
+        setAvailableBoxes(otherBoxes);
+      }
+    } catch (error) {
+      console.error("Error fetching boxes:", error);
     }
   };
 
@@ -154,6 +172,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     setItemName(item.name);
     setItemDescription(item.description || "");
     setItemCategory(item.category || "");
+    setSelectedDestinationBoxId("");
+    fetchAvailableBoxes();
     setShowEditItemModal(true);
   };
 
@@ -168,6 +188,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       formData.append("description", itemDescription);
       formData.append("category", itemCategory);
       if (itemImage) formData.append("image", itemImage);
+      if (selectedDestinationBoxId) formData.append("destinationBoxId", selectedDestinationBoxId);
 
       const response = await fetch(`/api/items/${editingItem.id}`, {
         method: "PATCH",
@@ -176,25 +197,48 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       if (response.ok) {
         const data = await response.json();
-        setBox((prev) =>
-          prev
-            ? {
-                ...prev,
-                items: prev.items.map((item) =>
-                  item.id === editingItem.id ? data.item : item
-                ),
-              }
-            : null
-        );
-        setItemName("");
-        setItemDescription("");
-        setItemCategory("");
-        setItemImage(null);
-        setEditingItem(null);
-        setShowEditItemModal(false);
+
+        if (data.moved) {
+          // Remove from current box
+          setBox((prev) =>
+            prev ? { ...prev, items: prev.items.filter((item) => item.id !== editingItem.id) } : null
+          );
+
+          // Show success message and close modal after 2 seconds
+          setMoveSuccessMessage(true);
+          setTimeout(() => {
+            setMoveSuccessMessage(false);
+            closeModal();
+          }, 2000);
+        } else {
+          // Update in current box
+          setBox((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  items: prev.items.map((item) =>
+                    item.id === editingItem.id ? data.item : item
+                  ),
+                }
+              : null
+          );
+
+          // Close modal immediately
+          setItemName("");
+          setItemDescription("");
+          setItemCategory("");
+          setItemImage(null);
+          setEditingItem(null);
+          setSelectedDestinationBoxId("");
+          setShowEditItemModal(false);
+        }
+      } else {
+        const error = await response.json();
+        alert(error.error || "Failed to update item");
       }
     } catch (error) {
       console.error("Error updating item:", error);
+      alert("Failed to update item. Please try again.");
     } finally {
       setSubmitting(false);
     }
@@ -229,6 +273,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     setItemCategory("");
     setItemImage(null);
     setShowSuccessMessage(false);
+    setSelectedDestinationBoxId("");
+    setMoveSuccessMessage(false);
+    setAvailableBoxes([]);
   };
 
   if (loading) {
@@ -439,6 +486,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             <h2 className="text-2xl font-bold text-gray-900 mb-4">
               {showEditItemModal ? "Edit Item" : "Add New Item"}
             </h2>
+            {moveSuccessMessage && showEditItemModal && (
+              <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded flex items-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                <span>Item moved successfully!</span>
+              </div>
+            )}
             {showSuccessMessage && showAddItemModal && (
               <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded flex items-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -500,6 +555,33 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     placeholder="Optional description"
                   />
                 </div>
+
+                {showEditItemModal && availableBoxes.length > 0 && (
+                  <div>
+                    <label
+                      htmlFor="destinationBox"
+                      className="block text-sm font-medium text-gray-900 mb-2"
+                    >
+                      Move to Different Box
+                    </label>
+                    <select
+                      id="destinationBox"
+                      value={selectedDestinationBoxId}
+                      onChange={(e) => setSelectedDestinationBoxId(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900"
+                    >
+                      <option value="">Keep in current box</option>
+                      {availableBoxes.map((box) => (
+                        <option key={box.id} value={box.id}>
+                          {box.name}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="mt-1 text-xs text-gray-500">
+                      Select a box to move this item to a different location
+                    </p>
+                  </div>
+                )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-900 mb-2">
