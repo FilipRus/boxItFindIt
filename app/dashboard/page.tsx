@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [editBoxName, setEditBoxName] = useState("");
   const [showEditBoxModal, setShowEditBoxModal] = useState(false);
   const [updatingBox, setUpdatingBox] = useState(false);
+  const [hasBoxes, setHasBoxes] = useState(false);
 
   useEffect(() => {
     fetchBoxes();
@@ -76,6 +77,13 @@ export default function Dashboard() {
 
       const data = await response.json();
       setBoxes(data.boxes || []);
+
+      // Track if user has any boxes at all (when not searching)
+      if (!search && data.boxes && data.boxes.length > 0) {
+        setHasBoxes(true);
+      } else if (!search && (!data.boxes || data.boxes.length === 0)) {
+        setHasBoxes(false);
+      }
     } catch (error) {
       console.error("Error fetching boxes:", error);
     } finally {
@@ -106,6 +114,7 @@ export default function Dashboard() {
         setBoxes([data.box, ...boxes]);
         setNewBoxName("");
         setShowNewBoxModal(false);
+        setHasBoxes(true);
       }
     } catch (error) {
       console.error("Error creating box:", error);
@@ -157,7 +166,11 @@ export default function Dashboard() {
       });
 
       if (response.ok) {
-        setBoxes(boxes.filter((box) => box.id !== id));
+        const remainingBoxes = boxes.filter((box) => box.id !== id);
+        setBoxes(remainingBoxes);
+        if (remainingBoxes.length === 0) {
+          setHasBoxes(false);
+        }
       }
     } catch (error) {
       console.error("Error deleting box:", error);
@@ -184,8 +197,8 @@ export default function Dashboard() {
       </nav>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
-        {/* Search and New Box button at top - only show when boxes exist */}
-        {!loading && boxes.length > 0 && (
+        {/* Search and New Box button at top - show when user has boxes or is searching */}
+        {!loading && (hasBoxes || searchQuery) && (
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <form onSubmit={handleSearch} className="flex-1">
@@ -214,13 +227,28 @@ export default function Dashboard() {
           </div>
         ) : boxes.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
-            <p className="text-gray-700 mb-4">No boxes yet</p>
-            <button
-              onClick={() => setShowNewBoxModal(true)}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
-            >
-              Create Your First Box
-            </button>
+            {searchQuery ? (
+              <>
+                <p className="text-gray-700 mb-2">No results found for &quot;{searchQuery}&quot;</p>
+                <p className="text-gray-500 text-sm mb-4">Try a different search term</p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                >
+                  Clear Search
+                </button>
+              </>
+            ) : (
+              <>
+                <p className="text-gray-700 mb-4">No boxes yet</p>
+                <button
+                  onClick={() => setShowNewBoxModal(true)}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                >
+                  Create Your First Box
+                </button>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
