@@ -17,7 +17,9 @@ export async function GET(
     const box = await prisma.box.findFirst({
       where: {
         id,
-        userId: session.user.id,
+        storageRoom: {
+          userId: session.user.id,
+        },
       },
       include: {
         items: {
@@ -66,7 +68,9 @@ export async function PATCH(
     const box = await prisma.box.findFirst({
       where: {
         id,
-        userId: session.user.id,
+        storageRoom: {
+          userId: session.user.id,
+        },
       },
     });
 
@@ -107,7 +111,9 @@ export async function DELETE(
     const box = await prisma.box.findFirst({
       where: {
         id,
-        userId: session.user.id,
+        storageRoom: {
+          userId: session.user.id,
+        },
       },
     });
 

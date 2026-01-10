@@ -22,7 +22,9 @@ export async function POST(
     const box = await prisma.box.findFirst({
       where: {
         id: boxId,
-        userId: session.user.id,
+        storageRoom: {
+          userId: session.user.id,
+        },
       },
     });
 

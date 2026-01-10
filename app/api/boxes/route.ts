@@ -16,7 +16,9 @@ export async function GET(request: NextRequest) {
 
     const boxes = await prisma.box.findMany({
       where: {
-        userId: session.user.id,
+        storageRoom: {
+          userId: session.user.id,
+        },
         ...(search && {
           OR: [
             { name: { contains: search } },
@@ -65,7 +67,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name } = await request.json();
+    const { name, storageRoomId } = await request.json();
 
     if (!name) {
       return NextResponse.json(
@@ -74,13 +76,32 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (!storageRoomId) {
+      return NextResponse.json(
+        { error: "Storage room ID is required" },
+        { status: 400 }
+      );
+    }
+
+    // Verify storage room belongs to user
+    const storageRoom = await prisma.storageRoom.findFirst({
+      where: {
+        id: storageRoomId,
+        userId: session.user.id,
+      },
+    });
+
+    if (!storageRoom) {
+      return NextResponse.json({ error: "Storage room not found" }, { status: 404 });
+    }
+
     const qrCode = nanoid(10);
 
     const box = await prisma.box.create({
       data: {
         name,
         qrCode,
-        userId: session.user.id,
+        storageRoomId,
       },
       include: {
         items: true,
