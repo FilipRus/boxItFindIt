@@ -13,10 +13,46 @@ interface StorageRoom {
   };
 }
 
+interface SearchItem {
+  id: string;
+  name: string;
+  description: string | null;
+  category: string | null;
+  box: {
+    id: string;
+    name: string;
+    storageRoom: {
+      id: string;
+      name: string;
+    };
+  };
+}
+
+interface SearchBox {
+  id: string;
+  name: string;
+  storageRoom: {
+    id: string;
+    name: string;
+  };
+  _count: {
+    items: number;
+  };
+}
+
+interface SearchResults {
+  items: SearchItem[];
+  boxes: SearchBox[];
+  storageRooms: StorageRoom[];
+}
+
 export default function StorageRoomsPage() {
   const router = useRouter();
   const [storageRooms, setStorageRooms] = useState<StorageRoom[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<SearchResults | null>(null);
+  const [searching, setSearching] = useState(false);
   const [showNewRoomModal, setShowNewRoomModal] = useState(false);
   const [newRoomName, setNewRoomName] = useState("");
   const [creatingRoom, setCreatingRoom] = useState(false);
@@ -28,6 +64,18 @@ export default function StorageRoomsPage() {
   useEffect(() => {
     fetchStorageRooms();
   }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (searchQuery) {
+        performSearch(searchQuery);
+      } else {
+        setSearchResults(null);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   const fetchStorageRooms = async () => {
     try {
@@ -44,6 +92,21 @@ export default function StorageRoomsPage() {
       console.error("Error fetching storage rooms:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const performSearch = async (query: string) => {
+    setSearching(true);
+    try {
+      const response = await fetch(`/api/search?q=${encodeURIComponent(query)}`);
+      if (response.ok) {
+        const data = await response.json();
+        setSearchResults(data);
+      }
+    } catch (error) {
+      console.error("Error searching:", error);
+    } finally {
+      setSearching(false);
     }
   };
 
@@ -141,19 +204,129 @@ export default function StorageRoomsPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {!loading && storageRooms.length > 0 && (
-          <div className="mb-6 sm:mb-8 flex justify-end">
-            <button
-              onClick={() => setShowNewRoomModal(true)}
-              className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-lg text-base"
-            >
-              New Storage Room
-            </button>
+          <div className="mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+              <div className="flex-1">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search everywhere - items, boxes, storage rooms..."
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base"
+                />
+              </div>
+              <button
+                onClick={() => setShowNewRoomModal(true)}
+                className="w-full sm:w-auto bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition font-medium shadow-lg text-base"
+              >
+                New Storage Room
+              </button>
+            </div>
           </div>
         )}
 
         {loading ? (
           <div className="text-center py-12">
             <p className="text-gray-600">Loading storage rooms...</p>
+          </div>
+        ) : searchQuery && searchResults ? (
+          <div>
+            {searching && (
+              <div className="text-center py-4 text-gray-600">
+                <p>Searching...</p>
+              </div>
+            )}
+
+            {!searching && (searchResults.items.length === 0 && searchResults.boxes.length === 0 && searchResults.storageRooms.length === 0) && (
+              <div className="text-center py-12 bg-white rounded-lg shadow">
+                <p className="text-gray-700 mb-2">No results found for &quot;{searchQuery}&quot;</p>
+                <p className="text-gray-500 text-sm mb-4">Try a different search term</p>
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
+                >
+                  Clear Search
+                </button>
+              </div>
+            )}
+
+            {!searching && (searchResults.items.length > 0 || searchResults.boxes.length > 0 || searchResults.storageRooms.length > 0) && (
+              <div className="space-y-6">
+                {/* Items Results */}
+                {searchResults.items.length > 0 && (
+                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Items ({searchResults.items.length})</h2>
+                    <div className="space-y-3">
+                      {searchResults.items.map((item) => (
+                        <Link
+                          key={item.id}
+                          href={`/dashboard/box/${item.box.id}`}
+                          className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-900">{item.name}</h3>
+                              {item.description && (
+                                <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                              )}
+                              {item.category && (
+                                <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2">
+                                  {item.category}
+                                </span>
+                              )}
+                              <div className="mt-2 text-sm text-gray-500">
+                                📦 {item.box.name} → 🏠 {item.box.storageRoom.name}
+                              </div>
+                            </div>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Boxes Results */}
+                {searchResults.boxes.length > 0 && (
+                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Boxes ({searchResults.boxes.length})</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {searchResults.boxes.map((box) => (
+                        <Link
+                          key={box.id}
+                          href={`/dashboard/box/${box.id}`}
+                          className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
+                        >
+                          <h3 className="font-semibold text-gray-900">{box.name}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{box._count.items} items</p>
+                          <div className="mt-2 text-sm text-gray-500">
+                            🏠 {box.storageRoom.name}
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Storage Rooms Results */}
+                {searchResults.storageRooms.length > 0 && (
+                  <div className="bg-white rounded-lg shadow p-4 sm:p-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">Storage Rooms ({searchResults.storageRooms.length})</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {searchResults.storageRooms.map((room) => (
+                        <Link
+                          key={room.id}
+                          href={`/dashboard/storage/${room.id}`}
+                          className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
+                        >
+                          <h3 className="font-semibold text-gray-900">{room.name}</h3>
+                          <p className="text-sm text-gray-600 mt-1">{room._count.boxes} boxes</p>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         ) : storageRooms.length === 0 ? (
           <div className="text-center py-12 bg-white rounded-lg shadow">
