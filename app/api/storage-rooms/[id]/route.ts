@@ -14,29 +14,34 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const box = await prisma.box.findFirst({
+    const storageRoom = await prisma.storageRoom.findFirst({
       where: {
         id,
-        storageRoom: {
-          userId: session.user.id,
-        },
+        userId: session.user.id,
       },
       include: {
-        items: {
+        boxes: {
+          include: {
+            _count: {
+              select: {
+                items: true,
+              },
+            },
+          },
           orderBy: {
-            createdAt: "desc",
+            updatedAt: "desc",
           },
         },
       },
     });
 
-    if (!box) {
-      return NextResponse.json({ error: "Box not found" }, { status: 404 });
+    if (!storageRoom) {
+      return NextResponse.json({ error: "Storage room not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ box });
+    return NextResponse.json({ storageRoom });
   } catch (error) {
-    console.error("Get box error:", error);
+    console.error("Get storage room error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -60,35 +65,38 @@ export async function PATCH(
 
     if (!name) {
       return NextResponse.json(
-        { error: "Box name is required" },
+        { error: "Storage room name is required" },
         { status: 400 }
       );
     }
 
-    const box = await prisma.box.findFirst({
+    const storageRoom = await prisma.storageRoom.findFirst({
       where: {
         id,
-        storageRoom: {
-          userId: session.user.id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!storageRoom) {
+      return NextResponse.json({ error: "Storage room not found" }, { status: 404 });
+    }
+
+    const updatedStorageRoom = await prisma.storageRoom.update({
+      where: { id },
+      data: { name },
+      include: {
+        boxes: true,
+        _count: {
+          select: {
+            boxes: true,
+          },
         },
       },
     });
 
-    if (!box) {
-      return NextResponse.json({ error: "Box not found" }, { status: 404 });
-    }
-
-    const updatedBox = await prisma.box.update({
-      where: { id },
-      data: { name },
-      include: {
-        items: true,
-      },
-    });
-
-    return NextResponse.json({ box: updatedBox });
+    return NextResponse.json({ storageRoom: updatedStorageRoom });
   } catch (error) {
-    console.error("Update box error:", error);
+    console.error("Update storage room error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -108,26 +116,24 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const box = await prisma.box.findFirst({
+    const storageRoom = await prisma.storageRoom.findFirst({
       where: {
         id,
-        storageRoom: {
-          userId: session.user.id,
-        },
+        userId: session.user.id,
       },
     });
 
-    if (!box) {
-      return NextResponse.json({ error: "Box not found" }, { status: 404 });
+    if (!storageRoom) {
+      return NextResponse.json({ error: "Storage room not found" }, { status: 404 });
     }
 
-    await prisma.box.delete({
+    await prisma.storageRoom.delete({
       where: { id },
     });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Delete box error:", error);
+    console.error("Delete storage room error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

@@ -3,9 +3,13 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { nanoid } from "nanoid";
 
-export async function GET(request: NextRequest) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -14,11 +18,21 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search");
 
+    // Verify storage room belongs to user
+    const storageRoom = await prisma.storageRoom.findFirst({
+      where: {
+        id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!storageRoom) {
+      return NextResponse.json({ error: "Storage room not found" }, { status: 404 });
+    }
+
     const boxes = await prisma.box.findMany({
       where: {
-        storageRoom: {
-          userId: session.user.id,
-        },
+        storageRoomId: id,
         ...(search && {
           OR: [
             { name: { contains: search } },
@@ -59,15 +73,19 @@ export async function GET(request: NextRequest) {
   }
 }
 
-export async function POST(request: NextRequest) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
   try {
     const session = await auth();
+    const { id } = await params;
 
     if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { name, storageRoomId } = await request.json();
+    const { name } = await request.json();
 
     if (!name) {
       return NextResponse.json(
@@ -76,17 +94,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!storageRoomId) {
-      return NextResponse.json(
-        { error: "Storage room ID is required" },
-        { status: 400 }
-      );
-    }
-
     // Verify storage room belongs to user
     const storageRoom = await prisma.storageRoom.findFirst({
       where: {
-        id: storageRoomId,
+        id,
         userId: session.user.id,
       },
     });
@@ -101,7 +112,7 @@ export async function POST(request: NextRequest) {
       data: {
         name,
         qrCode,
-        storageRoomId,
+        storageRoomId: id,
       },
       include: {
         items: true,

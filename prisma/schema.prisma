@@ -11,30 +11,42 @@ datasource db {
 }
 
 model User {
-  id                     String    @id @default(cuid())
-  email                  String    @unique
+  id                     String         @id @default(cuid())
+  email                  String         @unique
   password               String
   name                   String?
-  emailVerified          Boolean   @default(false)
-  verificationToken      String?   @unique
-  passwordResetToken     String?   @unique
+  emailVerified          Boolean        @default(false)
+  verificationToken      String?        @unique
+  passwordResetToken     String?        @unique
   passwordResetExpires   DateTime?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @updatedAt
-  boxes                  Box[]
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
+  storageRooms           StorageRoom[]
 }
 
-model Box {
+model StorageRoom {
   id        String   @id @default(cuid())
   name      String
-  qrCode    String   @unique
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  items     Item[]
+  boxes     Box[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([userId])
+}
+
+model Box {
+  id            String      @id @default(cuid())
+  name          String
+  qrCode        String      @unique
+  storageRoomId String
+  storageRoom   StorageRoom @relation(fields: [storageRoomId], references: [id], onDelete: Cascade)
+  items         Item[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([storageRoomId])
 }
 
 model Item {

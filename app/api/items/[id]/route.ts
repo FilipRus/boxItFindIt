@@ -23,7 +23,9 @@ export async function PATCH(
       where: {
         id,
         box: {
-          userId: session.user.id,
+          storageRoom: {
+            userId: session.user.id,
+          },
         },
       },
     });
@@ -45,7 +47,9 @@ export async function PATCH(
       const destinationBox = await prisma.box.findFirst({
         where: {
           id: destinationBoxId,
-          userId: session.user.id,
+          storageRoom: {
+            userId: session.user.id,
+          },
         },
       });
 
@@ -138,7 +142,9 @@ export async function DELETE(
       where: {
         id,
         box: {
-          userId: session.user.id,
+          storageRoom: {
+            userId: session.user.id,
+          },
         },
       },
     });
