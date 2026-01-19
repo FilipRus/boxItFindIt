@@ -29,12 +29,26 @@ export async function GET(request: NextRequest) {
           { name: { contains: query, mode: 'insensitive' } },
           { description: { contains: query, mode: 'insensitive' } },
           { category: { contains: query, mode: 'insensitive' } },
+          {
+            labels: {
+              some: {
+                label: {
+                  name: { contains: query, mode: 'insensitive' },
+                },
+              },
+            },
+          },
         ],
       },
       include: {
         box: {
           include: {
             storageRoom: true,
+          },
+        },
+        labels: {
+          include: {
+            label: true,
           },
         },
       },
