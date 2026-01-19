@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 
 export default function SignUp() {
   const router = useRouter();
@@ -11,11 +10,13 @@ export default function SignUp() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
     setLoading(true);
 
     try {
@@ -35,21 +36,15 @@ export default function SignUp() {
         return;
       }
 
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-      });
+      // Show success message and redirect to signin
+      setSuccess(data.message || "Account created! Please check your email to verify your account.");
 
-      if (result?.error) {
-        setError("Account created, but failed to sign in");
-      } else {
-        router.push("/dashboard");
-        router.refresh();
-      }
+      // Redirect to signin page after 3 seconds
+      setTimeout(() => {
+        router.push("/auth/signin");
+      }, 3000);
     } catch (error) {
       setError("An error occurred during sign up");
-    } finally {
       setLoading(false);
     }
   };
@@ -68,6 +63,12 @@ export default function SignUp() {
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
+            </div>
+          )}
+
+          {success && (
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+              {success}
             </div>
           )}
 
