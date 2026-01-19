@@ -271,7 +271,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
       if (response.ok) {
         const data = await response.json();
-        setQrCodeImage(data.qrCode);
+        setQrCodeImage(data.qrCodeImage);
         setShowQRModal(true);
       }
     } catch (error) {
