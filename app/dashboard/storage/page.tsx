@@ -126,26 +126,6 @@ export default function StorageRoomsPage() {
     }
   };
 
-  const getMatchBadges = (item: SearchItem, query: string): string[] => {
-    const badges: string[] = [];
-    const lowerQuery = query.toLowerCase();
-
-    if (item.name.toLowerCase().includes(lowerQuery)) {
-      badges.push("Name");
-    }
-    if (item.description?.toLowerCase().includes(lowerQuery)) {
-      badges.push("Description");
-    }
-    if (item.category?.toLowerCase().includes(lowerQuery)) {
-      badges.push("Category");
-    }
-    if (item.labels?.some(il => il.label.name.toLowerCase().includes(lowerQuery))) {
-      badges.push("Label");
-    }
-
-    return badges;
-  };
-
   const createStorageRoom = async (e: React.FormEvent) => {
     e.preventDefault();
     setCreatingRoom(true);
@@ -304,7 +284,6 @@ export default function StorageRoomsPage() {
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Items ({searchResults.items.length})</h2>
                     <div className="space-y-3">
                       {searchResults.items.map((item) => {
-                        const matchBadges = getMatchBadges(item, searchQuery);
                         return (
                           <Link
                             key={item.id}
@@ -313,27 +292,14 @@ export default function StorageRoomsPage() {
                           >
                             <div className="flex justify-between items-start">
                               <div className="flex-1">
-                                <div className="flex items-center gap-2 flex-wrap mb-2">
-                                  <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                                  {matchBadges.map((badge) => (
-                                    <span
-                                      key={badge}
-                                      className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 text-xs px-2 py-0.5 rounded"
-                                    >
-                                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                      </svg>
-                                      Matched: {badge}
-                                    </span>
-                                  ))}
-                                </div>
+                                <h3 className="font-semibold text-gray-900 mb-2">{item.name}</h3>
                                 {item.description && (
                                   <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                                 )}
                                 <div className="flex flex-wrap gap-2 mt-2">
                                   {item.category && (
                                     <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                      Category: {item.category}
+                                      {item.category}
                                     </span>
                                   )}
                                   {item.labels && item.labels.length > 0 && (
