@@ -50,7 +50,15 @@ export async function GET(
         }),
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            labels: {
+              include: {
+                label: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             items: true,
