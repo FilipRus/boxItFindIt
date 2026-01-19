@@ -35,7 +35,6 @@ export async function POST(
     const formData = await request.formData();
     const name = formData.get("name") as string;
     const description = formData.get("description") as string | null;
-    const category = formData.get("category") as string | null;
     const image = formData.get("image") as File | null;
     const labelsJson = formData.get("labels") as string | null;
 
@@ -77,7 +76,6 @@ export async function POST(
       data: {
         name,
         description,
-        category,
         imagePath,
         boxId,
       },

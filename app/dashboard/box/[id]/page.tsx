@@ -18,7 +18,6 @@ interface Item {
   id: string;
   name: string;
   description: string | null;
-  category: string | null;
   imagePath: string | null;
   labels?: ItemLabel[];
 }
@@ -43,7 +42,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
-  const [itemCategory, setItemCategory] = useState("");
   const [itemImage, setItemImage] = useState<File | null>(null);
   const [itemLabels, setItemLabels] = useState<string[]>([]);
   const [labelInput, setLabelInput] = useState("");
@@ -159,7 +157,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       const formData = new FormData();
       formData.append("name", itemName);
       if (itemDescription) formData.append("description", itemDescription);
-      if (itemCategory) formData.append("category", itemCategory);
       if (itemImage) formData.append("image", itemImage);
       formData.append("labels", JSON.stringify(itemLabels));
 
@@ -176,7 +173,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         // Clear form but keep modal open
         setItemName("");
         setItemDescription("");
-        setItemCategory("");
         setItemImage(null);
         setItemLabels([]);
         setLabelInput("");
@@ -203,7 +199,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     setEditingItem(item);
     setItemName(item.name);
     setItemDescription(item.description || "");
-    setItemCategory(item.category || "");
     setItemLabels(item.labels?.map(il => il.label.name) || []);
     setLabelInput("");
     setSelectedDestinationBoxId("");
@@ -221,7 +216,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       const formData = new FormData();
       formData.append("name", itemName);
       formData.append("description", itemDescription);
-      formData.append("category", itemCategory);
       if (itemImage) formData.append("image", itemImage);
       if (selectedDestinationBoxId) formData.append("destinationBoxId", selectedDestinationBoxId);
       formData.append("labels", JSON.stringify(itemLabels));
@@ -262,7 +256,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
           // Close modal immediately
           setItemName("");
           setItemDescription("");
-          setItemCategory("");
           setItemImage(null);
           setEditingItem(null);
           setSelectedDestinationBoxId("");
@@ -306,7 +299,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     setEditingItem(null);
     setItemName("");
     setItemDescription("");
-    setItemCategory("");
     setItemImage(null);
     setItemLabels([]);
     setLabelInput("");
@@ -488,11 +480,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       </button>
                     </div>
                   </div>
-                  {item.category && (
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-2">
-                      {item.category}
-                    </span>
-                  )}
                   {item.labels && item.labels.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-2">
                       {item.labels.map((itemLabel) => (
@@ -548,11 +535,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 items-center">
-                    {item.category && (
-                      <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                        {item.category}
-                      </span>
-                    )}
                     {item.labels && item.labels.length > 0 && (
                       <>
                         {item.labels.map((itemLabel) => (
@@ -615,23 +597,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     required
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                     placeholder="e.g., Coffee Maker"
-                  />
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="itemCategory"
-                    className="block text-sm font-medium text-gray-900 mb-2"
-                  >
-                    Category
-                  </label>
-                  <input
-                    id="itemCategory"
-                    type="text"
-                    value={itemCategory}
-                    onChange={(e) => setItemCategory(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
-                    placeholder="e.g., Kitchen, Electronics"
                   />
                 </div>
 

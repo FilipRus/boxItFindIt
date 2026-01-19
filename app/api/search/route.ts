@@ -28,7 +28,6 @@ export async function GET(request: NextRequest) {
         OR: [
           { name: { contains: query, mode: 'insensitive' } },
           { description: { contains: query, mode: 'insensitive' } },
-          { category: { contains: query, mode: 'insensitive' } },
           {
             labels: {
               some: {

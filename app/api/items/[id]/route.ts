@@ -37,7 +37,6 @@ export async function PATCH(
     const formData = await request.formData();
     const name = formData.get("name") as string;
     const description = formData.get("description") as string | null;
-    const category = formData.get("category") as string | null;
     const image = formData.get("image") as File | null;
     const deleteImage = formData.get("deleteImage") === "true";
     const destinationBoxId = formData.get("destinationBoxId") as string | null;
@@ -108,7 +107,6 @@ export async function PATCH(
       data: {
         name,
         description,
-        category,
         imagePath,
         ...(destinationBoxId && { boxId: destinationBoxId }),
       },

@@ -54,7 +54,6 @@ model Item {
   id          String      @id @default(cuid())
   name        String
   description String?
-  category    String?
   imagePath   String?
   boxId       String
   box         Box         @relation(fields: [boxId], references: [id], onDelete: Cascade)
@@ -64,7 +63,6 @@ model Item {
 
   @@index([boxId])
   @@index([name])
-  @@index([category])
 }
 
 model Label {

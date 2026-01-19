@@ -26,7 +26,6 @@ interface SearchItem {
   id: string;
   name: string;
   description: string | null;
-  category: string | null;
   labels?: ItemLabel[];
   box: {
     id: string;
@@ -228,7 +227,7 @@ export default function StorageRoomsPage() {
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by name, label, category, or description..."
+                    placeholder="Search by name, label, or description..."
                     className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base"
                   />
                   {searchQuery && (
@@ -297,11 +296,6 @@ export default function StorageRoomsPage() {
                                   <p className="text-sm text-gray-600 mt-1">{item.description}</p>
                                 )}
                                 <div className="flex flex-wrap gap-2 mt-2">
-                                  {item.category && (
-                                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                                      {item.category}
-                                    </span>
-                                  )}
                                   {item.labels && item.labels.length > 0 && (
                                     <>
                                       {item.labels.map((itemLabel) => (
