@@ -42,7 +42,6 @@ export async function GET(
                   OR: [
                     { name: { contains: search } },
                     { description: { contains: search } },
-                    { category: { contains: search } },
                   ],
                 },
               },
