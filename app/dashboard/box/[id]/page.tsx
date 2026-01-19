@@ -72,6 +72,24 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     };
   }, [id]);
 
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showEditItemModal || showAddItemModal) {
+          closeModal();
+        }
+      }
+    };
+
+    if (showEditItemModal || showAddItemModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showEditItemModal, showAddItemModal]);
+
   const fetchBox = async () => {
     try {
       const response = await fetch(`/api/boxes/${id}`);

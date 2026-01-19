@@ -65,6 +65,31 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
     fetchBoxes();
   }, [id]);
 
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showEditItemModal) {
+          closeItemModal();
+        } else if (showNewBoxModal) {
+          setShowNewBoxModal(false);
+          setNewBoxName("");
+        } else if (showEditBoxModal) {
+          setShowEditBoxModal(false);
+          setEditingBox(null);
+          setEditBoxName("");
+        }
+      }
+    };
+
+    if (showEditItemModal || showNewBoxModal || showEditBoxModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showEditItemModal, showNewBoxModal, showEditBoxModal]);
+
   const fetchStorageRoom = async () => {
     try {
       const response = await fetch(`/api/storage-rooms/${id}`);
