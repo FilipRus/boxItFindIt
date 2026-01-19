@@ -35,8 +35,8 @@ export async function POST(
     const formData = await request.formData();
     const name = formData.get("name") as string;
     const description = formData.get("description") as string | null;
-    const category = formData.get("category") as string | null;
     const image = formData.get("image") as File | null;
+    const labelsJson = formData.get("labels") as string | null;
 
     if (!name) {
       return NextResponse.json(
@@ -68,17 +68,72 @@ export async function POST(
       imagePath = await uploadToCloudinary(image, "boxit/items");
     }
 
+    // Parse labels
+    const labelNames: string[] = labelsJson ? JSON.parse(labelsJson) : [];
+
+    // Create or find labels and create item with label connections
     const item = await prisma.item.create({
       data: {
         name,
         description,
-        category,
         imagePath,
         boxId,
       },
+      include: {
+        labels: {
+          include: {
+            label: true,
+          },
+        },
+      },
     });
 
-    return NextResponse.json({ item }, { status: 201 });
+    // Handle labels
+    if (labelNames.length > 0) {
+      for (const labelName of labelNames) {
+        const trimmedName = labelName.trim();
+        if (!trimmedName) continue;
+
+        // Find or create label
+        let label = await prisma.label.findFirst({
+          where: {
+            name: trimmedName,
+            userId: session.user.id,
+          },
+        });
+
+        if (!label) {
+          label = await prisma.label.create({
+            data: {
+              name: trimmedName,
+              userId: session.user.id,
+            },
+          });
+        }
+
+        // Create item-label connection
+        await prisma.itemLabel.create({
+          data: {
+            itemId: item.id,
+            labelId: label.id,
+          },
+        });
+      }
+    }
+
+    // Fetch item with labels for response
+    const itemWithLabels = await prisma.item.findUnique({
+      where: { id: item.id },
+      include: {
+        labels: {
+          include: {
+            label: true,
+          },
+        },
+      },
+    });
+
+    return NextResponse.json({ item: itemWithLabels }, { status: 201 });
   } catch (error) {
     console.error("Create item error:", error);
     return NextResponse.json(

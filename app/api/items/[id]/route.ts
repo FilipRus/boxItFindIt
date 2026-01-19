@@ -37,10 +37,10 @@ export async function PATCH(
     const formData = await request.formData();
     const name = formData.get("name") as string;
     const description = formData.get("description") as string | null;
-    const category = formData.get("category") as string | null;
     const image = formData.get("image") as File | null;
     const deleteImage = formData.get("deleteImage") === "true";
     const destinationBoxId = formData.get("destinationBoxId") as string | null;
+    const labelsJson = formData.get("labels") as string | null;
 
     // If moving to another box, verify ownership of destination box
     if (destinationBoxId && destinationBoxId !== item.boxId) {
@@ -107,14 +107,68 @@ export async function PATCH(
       data: {
         name,
         description,
-        category,
         imagePath,
         ...(destinationBoxId && { boxId: destinationBoxId }),
       },
     });
 
+    // Handle labels
+    if (labelsJson !== null) {
+      const labelNames: string[] = JSON.parse(labelsJson);
+
+      // Delete existing label connections
+      await prisma.itemLabel.deleteMany({
+        where: { itemId: id },
+      });
+
+      // Create new label connections
+      if (labelNames.length > 0) {
+        for (const labelName of labelNames) {
+          const trimmedName = labelName.trim();
+          if (!trimmedName) continue;
+
+          // Find or create label
+          let label = await prisma.label.findFirst({
+            where: {
+              name: trimmedName,
+              userId: session.user.id,
+            },
+          });
+
+          if (!label) {
+            label = await prisma.label.create({
+              data: {
+                name: trimmedName,
+                userId: session.user.id,
+              },
+            });
+          }
+
+          // Create item-label connection
+          await prisma.itemLabel.create({
+            data: {
+              itemId: id,
+              labelId: label.id,
+            },
+          });
+        }
+      }
+    }
+
+    // Fetch item with labels for response
+    const itemWithLabels = await prisma.item.findUnique({
+      where: { id },
+      include: {
+        labels: {
+          include: {
+            label: true,
+          },
+        },
+      },
+    });
+
     return NextResponse.json({
-      item: updatedItem,
+      item: itemWithLabels,
       moved: destinationBoxId ? destinationBoxId !== item.boxId : false
     });
   } catch (error) {

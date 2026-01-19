@@ -13,11 +13,20 @@ interface StorageRoom {
   };
 }
 
+interface Label {
+  id: string;
+  name: string;
+}
+
+interface ItemLabel {
+  label: Label;
+}
+
 interface SearchItem {
   id: string;
   name: string;
   description: string | null;
-  category: string | null;
+  labels?: ItemLabel[];
   box: {
     id: string;
     name: string;
@@ -213,13 +222,23 @@ export default function StorageRoomsPage() {
           <div className="mb-6 sm:mb-8">
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
               <div className="flex-1">
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search everywhere - items, boxes, storage rooms..."
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base"
-                />
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by name, label, or description..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500 text-base"
+                  />
+                  {searchQuery && (
+                    <div className="absolute right-3 top-3 flex items-center gap-1 text-xs text-gray-500">
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                      </svg>
+                      Searching...
+                    </div>
+                  )}
+                </div>
               </div>
               <button
                 onClick={() => setShowNewRoomModal(true)}
@@ -263,30 +282,41 @@ export default function StorageRoomsPage() {
                   <div className="bg-white rounded-lg shadow p-4 sm:p-6">
                     <h2 className="text-lg font-semibold text-gray-900 mb-4">Items ({searchResults.items.length})</h2>
                     <div className="space-y-3">
-                      {searchResults.items.map((item) => (
-                        <Link
-                          key={item.id}
-                          href={`/dashboard/box/${item.box.id}`}
-                          className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
-                        >
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1">
-                              <h3 className="font-semibold text-gray-900">{item.name}</h3>
-                              {item.description && (
-                                <p className="text-sm text-gray-600 mt-1">{item.description}</p>
-                              )}
-                              {item.category && (
-                                <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mt-2">
-                                  {item.category}
-                                </span>
-                              )}
-                              <div className="mt-2 text-sm text-gray-500">
-                                📦 {item.box.name} → 🏠 {item.box.storageRoom.name}
+                      {searchResults.items.map((item) => {
+                        return (
+                          <Link
+                            key={item.id}
+                            href={`/dashboard/box/${item.box.id}`}
+                            className="block p-4 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition"
+                          >
+                            <div className="flex justify-between items-start">
+                              <div className="flex-1">
+                                <h3 className="font-semibold text-gray-900 mb-2">{item.name}</h3>
+                                {item.description && (
+                                  <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+                                )}
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                  {item.labels && item.labels.length > 0 && (
+                                    <>
+                                      {item.labels.map((itemLabel) => (
+                                        <span
+                                          key={itemLabel.label.id}
+                                          className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded"
+                                        >
+                                          🏷️ {itemLabel.label.name}
+                                        </span>
+                                      ))}
+                                    </>
+                                  )}
+                                </div>
+                                <div className="mt-2 text-sm text-gray-500">
+                                  📦 {item.box.name} → 🏠 {item.box.storageRoom.name}
+                                </div>
                               </div>
                             </div>
-                          </div>
-                        </Link>
-                      ))}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
