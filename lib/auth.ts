@@ -34,12 +34,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           return null;
         }
 
-        // Check if email is verified (skip in development)
-        if (!user.emailVerified && process.env.NODE_ENV === "production") {
-          // Return null to fail authentication
-          // The error message will be shown on the signin page
-          return null;
-        }
+        // Check if email is verified (currently disabled)
+        // TODO: Enable email verification when domain is verified with Resend
+        // if (!user.emailVerified) {
+        //   return null;
+        // }
 
         return {
           id: user.id,
