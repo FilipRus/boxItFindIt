@@ -61,4 +61,6 @@ model Item {
   updatedAt   DateTime @updatedAt
 
   @@index([boxId])
+  @@index([name])
+  @@index([category])
 }

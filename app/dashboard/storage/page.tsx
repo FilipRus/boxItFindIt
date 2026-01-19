@@ -66,13 +66,19 @@ export default function StorageRoomsPage() {
   }, []);
 
   useEffect(() => {
+    // Show loading state immediately
+    if (searchQuery) {
+      setSearching(true);
+    }
+
     const timer = setTimeout(() => {
       if (searchQuery) {
         performSearch(searchQuery);
       } else {
         setSearchResults(null);
+        setSearching(false);
       }
-    }, 300);
+    }, 150); // Reduced from 300ms to 150ms
 
     return () => clearTimeout(timer);
   }, [searchQuery]);
