@@ -92,6 +92,29 @@ export default function StorageRoomsPage() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showEditRoomModal) {
+          setShowEditRoomModal(false);
+          setEditingRoom(null);
+          setEditRoomName("");
+        } else if (showNewRoomModal) {
+          setShowNewRoomModal(false);
+          setNewRoomName("");
+        }
+      }
+    };
+
+    if (showEditRoomModal || showNewRoomModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showEditRoomModal, showNewRoomModal]);
+
   const fetchStorageRooms = async () => {
     try {
       const response = await fetch("/api/storage-rooms");
