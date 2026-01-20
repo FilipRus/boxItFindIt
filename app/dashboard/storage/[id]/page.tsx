@@ -60,6 +60,11 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
   const [showLabelSuggestions, setShowLabelSuggestions] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  // QR code state
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrCodeImage, setQrCodeImage] = useState("");
+  const [selectedBox, setSelectedBox] = useState<Box | null>(null);
+
   useEffect(() => {
     fetchStorageRoom();
     fetchBoxes();
@@ -68,7 +73,11 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
   useEffect(() => {
     const handleEscapeKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (showEditItemModal) {
+        if (showQRModal) {
+          setShowQRModal(false);
+          setSelectedBox(null);
+          setQrCodeImage("");
+        } else if (showEditItemModal) {
           closeItemModal();
         } else if (showNewBoxModal) {
           setShowNewBoxModal(false);
@@ -81,14 +90,14 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
       }
     };
 
-    if (showEditItemModal || showNewBoxModal || showEditBoxModal) {
+    if (showQRModal || showEditItemModal || showNewBoxModal || showEditBoxModal) {
       document.addEventListener('keydown', handleEscapeKey);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
-  }, [showEditItemModal, showNewBoxModal, showEditBoxModal]);
+  }, [showQRModal, showEditItemModal, showNewBoxModal, showEditBoxModal]);
 
   const fetchStorageRoom = async () => {
     try {
@@ -244,6 +253,29 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
       }
     } catch (error) {
       console.error("Error deleting box:", error);
+    }
+  };
+
+  const generateQRCode = async (box: Box, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedBox(box);
+
+    try {
+      const response = await fetch("/api/qr", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ qrCode: box.qrCode }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setQrCodeImage(data.qrCodeImage);
+        setShowQRModal(true);
+      }
+    } catch (error) {
+      console.error("Error generating QR code:", error);
     }
   };
 
@@ -439,8 +471,28 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     </div>
                     <div className="flex gap-2">
                       <button
+                        onClick={(e) => generateQRCode(box, e)}
+                        className="text-purple-500 hover:text-purple-700"
+                        title="Generate QR Code"
+                      >
+                        <svg
+                          className="w-5 h-5"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"
+                          />
+                        </svg>
+                      </button>
+                      <button
                         onClick={(e) => startEditBox(box, e)}
                         className="text-blue-500 hover:text-blue-700"
+                        title="Edit box"
                       >
                         <svg
                           className="w-5 h-5"
@@ -459,6 +511,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       <button
                         onClick={(e) => deleteBox(box.id, e)}
                         className="text-red-500 hover:text-red-700"
+                        title="Delete box"
                       >
                         <svg
                           className="w-5 h-5"
@@ -821,6 +874,59 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Modal */}
+      {showQRModal && selectedBox && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-xl font-semibold text-gray-900">
+                QR Code - {selectedBox.name}
+              </h2>
+              <button
+                onClick={() => {
+                  setShowQRModal(false);
+                  setSelectedBox(null);
+                  setQrCodeImage("");
+                }}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <div className="flex flex-col items-center">
+              <img
+                src={qrCodeImage}
+                alt="QR Code"
+                className="w-64 h-64 mb-4"
+              />
+              <p className="text-sm text-gray-600 text-center mb-4">
+                Scan this QR code to view box contents
+              </p>
+              <a
+                href={qrCodeImage}
+                download={`${selectedBox.name}-qr-code.png`}
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition font-medium text-center"
+              >
+                Download QR Code
+              </a>
+            </div>
           </div>
         </div>
       )}
