@@ -256,6 +256,35 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
     }
   };
 
+  const printQRCode = () => {
+    if (!selectedBox || !qrCodeImage) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>QR Code - ${selectedBox.name}</title>
+          <style>
+            @page { size: auto; margin: 10mm; }
+            body { display: flex; justify-content: center; align-items: flex-start; padding-top: 10mm; font-family: sans-serif; }
+            .qr-label { text-align: center; width: 50mm; }
+            .qr-label img { width: 50mm; height: 50mm; }
+            .qr-label p { margin: 4mm 0 0; font-size: 12pt; font-weight: bold; word-break: break-word; }
+          </style>
+        </head>
+        <body>
+          <div class="qr-label">
+            <img src="${qrCodeImage}" alt="QR Code" />
+            <p>${selectedBox.name}</p>
+          </div>
+          <script>window.onload = function() { window.print(); }</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const generateQRCode = async (box: Box, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedBox(box);
@@ -919,13 +948,21 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
               <p className="text-sm text-gray-600 text-center mb-4">
                 Scan this QR code to view box contents
               </p>
-              <a
-                href={qrCodeImage}
-                download={`${selectedBox.name}-qr-code.png`}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition font-medium text-center"
-              >
-                Download QR Code
-              </a>
+              <div className="flex gap-3 w-full">
+                <a
+                  href={qrCodeImage}
+                  download={`${selectedBox.name}-qr-code.png`}
+                  className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition font-medium text-center"
+                >
+                  Download
+                </a>
+                <button
+                  onClick={printQRCode}
+                  className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition font-medium"
+                >
+                  Print
+                </button>
+              </div>
             </div>
           </div>
         </div>
