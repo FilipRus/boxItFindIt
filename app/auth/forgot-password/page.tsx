@@ -40,14 +40,14 @@ export default function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-6">
-      <div className="max-w-md w-full bg-white rounded-lg shadow-xl p-6 sm:p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-6">
+      <div className="max-w-md w-full bg-white rounded-lg border border-gray-200 p-6 sm:p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Forgot Password?
           </h1>
-          <p className="text-gray-700">
-            Enter your email and we'll send you a reset link
+          <p className="text-gray-500">
+            Enter your email and we&apos;ll send you a reset link
           </p>
         </div>
 
@@ -77,7 +77,7 @@ export default function ForgotPassword() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
               placeholder="you@example.com"
             />
           </div>
@@ -85,17 +85,17 @@ export default function ForgotPassword() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
+            className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
           >
             {loading ? "Sending..." : "Send Reset Link"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-700">
+        <p className="mt-6 text-center text-sm text-gray-500">
           Remember your password?{" "}
           <Link
             href="/auth/signin"
-            className="text-blue-600 hover:text-blue-700 font-medium"
+            className="text-gray-900 hover:underline font-medium"
           >
             Sign in
           </Link>
