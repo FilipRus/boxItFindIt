@@ -167,6 +167,35 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     link.click();
   };
 
+  const printQRCode = () => {
+    if (!box || !qrCodeImage) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>QR Code - ${box.name}</title>
+          <style>
+            @page { size: auto; margin: 10mm; }
+            body { display: flex; justify-content: center; align-items: flex-start; padding-top: 10mm; font-family: sans-serif; }
+            .qr-label { text-align: center; width: 50mm; }
+            .qr-label img { width: 50mm; height: 50mm; }
+            .qr-label p { margin: 4mm 0 0; font-size: 12pt; font-weight: bold; word-break: break-word; }
+          </style>
+        </head>
+        <body>
+          <div class="qr-label">
+            <img src="${qrCodeImage}" alt="QR Code" />
+            <p>${box.name}</p>
+          </div>
+          <script>window.onload = function() { window.print(); }</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const addItem = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -823,6 +852,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
               >
                 Download
+              </button>
+              <button
+                onClick={printQRCode}
+                className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-medium"
+              >
+                Print
               </button>
             </div>
           </div>
