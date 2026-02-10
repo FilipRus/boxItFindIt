@@ -50,24 +50,24 @@ export default function SignUp() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-6">
-      <div className="max-w-md w-full bg-white rounded-lg border border-gray-200 p-6 sm:p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 py-6">
+      <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             BoxIT
           </h1>
-          <p className="text-gray-500">Create your account</p>
+          <p className="text-gray-500 dark:text-gray-400">Create your account</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded">
               {error}
             </div>
           )}
 
           {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
+            <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded">
               {success}
             </div>
           )}
@@ -75,7 +75,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-medium text-gray-900 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2"
             >
               Name (optional)
             </label>
@@ -84,7 +84,7 @@ export default function SignUp() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
               placeholder="John Doe"
             />
           </div>
@@ -92,7 +92,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-900 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2"
             >
               Email
             </label>
@@ -102,7 +102,7 @@ export default function SignUp() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
               placeholder="you@example.com"
             />
           </div>
@@ -110,7 +110,7 @@ export default function SignUp() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-900 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2"
             >
               Password
             </label>
@@ -121,7 +121,7 @@ export default function SignUp() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
               placeholder="••••••••"
             />
           </div>
@@ -129,17 +129,17 @@ export default function SignUp() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
+            className="w-full bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 py-2 px-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
           >
             {loading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
           Already have an account?{" "}
           <Link
             href="/auth/signin"
-            className="text-gray-900 hover:underline font-medium"
+            className="text-gray-900 dark:text-gray-100 hover:underline font-medium"
           >
             Sign in
           </Link>

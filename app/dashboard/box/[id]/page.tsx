@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 interface Label {
   id: string;
@@ -383,11 +384,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white border-b border-gray-200">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+        <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center h-14">
+            <div className="flex justify-between items-center h-14">
               <div className="animate-skeleton h-4 w-32"></div>
+              <ThemeToggle />
             </div>
           </div>
         </nav>
@@ -395,7 +397,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
           <div className="animate-skeleton h-7 w-48 mb-6"></div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg overflow-hidden">
                 <div className="animate-skeleton h-40 w-full rounded-none"></div>
                 <div className="p-4">
                   <div className="animate-skeleton h-5 w-24 mb-2"></div>
@@ -414,13 +416,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-14">
-            <Link href="/dashboard/storage" className="text-sm text-gray-500 hover:text-gray-900 transition">
+          <div className="flex justify-between items-center h-14">
+            <Link href="/dashboard/storage" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
               &larr; Back to Dashboard
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
@@ -428,18 +431,18 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">{box.name}</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">{box.name}</h1>
             {box.items.length > 0 && (
               <div className="flex flex-col sm:flex-row w-full sm:w-auto gap-2">
                 <button
                   onClick={generateQRCode}
-                  className="w-full sm:w-auto border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg hover:bg-gray-50 transition font-medium text-sm"
+                  className="w-full sm:w-auto border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2.5 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-sm"
                 >
                   QR Code
                 </button>
                 <button
                   onClick={() => setShowAddItemModal(true)}
-                  className="w-full sm:w-auto bg-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 transition font-medium text-sm"
+                  className="w-full sm:w-auto bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
                 >
                   Add Item
                 </button>
@@ -449,14 +452,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
           {box.items.length > 0 && (
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <p className="text-sm text-gray-400">{box.items.length} items</p>
-              <div className="flex gap-1 bg-white border border-gray-200 rounded-lg p-0.5">
+              <p className="text-sm text-gray-400 dark:text-gray-500">{box.items.length} items</p>
+              <div className="flex gap-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-0.5">
                 <button
                   onClick={() => setViewMode("grid")}
                   className={`px-3 py-1.5 rounded-md transition text-sm ${
                     viewMode === "grid"
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-500 hover:text-gray-900"
+                      ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                      : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -467,8 +470,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   onClick={() => setViewMode("list")}
                   className={`px-3 py-1.5 rounded-md transition text-sm ${
                     viewMode === "list"
-                      ? "bg-gray-900 text-white"
-                      : "text-gray-500 hover:text-gray-900"
+                      ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                      : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                   }`}
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -481,15 +484,15 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         </div>
 
         {box.items.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
-            <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
+            <svg className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
-            <p className="text-gray-900 mb-1">No items yet</p>
-            <p className="text-gray-400 text-sm mb-5">Add your first item to this box</p>
+            <p className="text-gray-900 dark:text-gray-100 mb-1">No items yet</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mb-5">Add your first item to this box</p>
             <button
               onClick={() => setShowAddItemModal(true)}
-              className="bg-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition font-medium text-sm"
+              className="bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
             >
               Add Item
             </button>
@@ -500,19 +503,19 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               <div
                 key={item.id}
                 onClick={() => startEditItem(item)}
-                className="bg-white border border-gray-200 rounded-lg hover:border-gray-300 hover:shadow-sm transition overflow-hidden cursor-pointer"
+                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-sm transition overflow-hidden cursor-pointer"
               >
                 {item.imagePath && (
-                  <div className="relative w-full h-40 bg-gray-100">
+                  <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-800">
                     <Image src={item.imagePath} alt={item.name} fill className="object-cover" />
                   </div>
                 )}
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-medium text-gray-900 text-sm">{item.name}</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.name}</h3>
                     <button
                       onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
-                      className="text-gray-400 hover:text-red-500 p-0.5 transition"
+                      className="text-gray-400 dark:text-gray-500 hover:text-red-500 p-0.5 transition"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -522,14 +525,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   {item.labels && item.labels.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-1">
                       {item.labels.map((itemLabel) => (
-                        <span key={itemLabel.label.id} className="inline-block bg-gray-100 text-gray-500 text-xs px-1.5 py-0.5 rounded">
+                        <span key={itemLabel.label.id} className="inline-block bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs px-1.5 py-0.5 rounded">
                           {itemLabel.label.name}
                         </span>
                       ))}
                     </div>
                   )}
                   {item.description && (
-                    <p className="text-gray-400 text-xs">{item.description}</p>
+                    <p className="text-gray-400 dark:text-gray-500 text-xs">{item.description}</p>
                   )}
                 </div>
               </div>
@@ -541,19 +544,19 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               <div
                 key={item.id}
                 onClick={() => startEditItem(item)}
-                className="bg-white border border-gray-200 rounded-lg hover:border-gray-300 transition p-4 flex gap-4 cursor-pointer"
+                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition p-4 flex gap-4 cursor-pointer"
               >
                 {item.imagePath && (
-                  <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded-lg overflow-hidden">
+                  <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
                     <Image src={item.imagePath} alt={item.name} fill className="object-cover" />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-2 mb-1">
-                    <h3 className="font-medium text-gray-900 text-sm">{item.name}</h3>
+                    <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.name}</h3>
                     <button
                       onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
-                      className="text-gray-400 hover:text-red-500 p-0.5 flex-shrink-0 transition"
+                      className="text-gray-400 dark:text-gray-500 hover:text-red-500 p-0.5 flex-shrink-0 transition"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -563,14 +566,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   {item.labels && item.labels.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-1">
                       {item.labels.map((itemLabel) => (
-                        <span key={itemLabel.label.id} className="inline-block bg-gray-100 text-gray-500 text-xs px-1.5 py-0.5 rounded">
+                        <span key={itemLabel.label.id} className="inline-block bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs px-1.5 py-0.5 rounded">
                           {itemLabel.label.name}
                         </span>
                       ))}
                     </div>
                   )}
                   {item.description && (
-                    <p className="text-gray-400 text-xs">{item.description}</p>
+                    <p className="text-gray-400 dark:text-gray-500 text-xs">{item.description}</p>
                   )}
                 </div>
               </div>
@@ -581,55 +584,55 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       {(showAddItemModal || showEditItemModal) && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-0 sm:p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 sm:my-8 overflow-y-auto">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">
+          <div className="bg-white dark:bg-gray-900 rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 sm:my-8 overflow-y-auto">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">
               {showEditItemModal ? "Edit Item" : "Add Item"}
             </h2>
             {moveSuccessMessage && showEditItemModal && (
-              <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
+              <div className="mb-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded text-sm">
                 Item moved successfully!
               </div>
             )}
             {showSuccessMessage && showAddItemModal && (
-              <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded text-sm">
+              <div className="mb-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded text-sm">
                 Item added! Add another or close when done.
               </div>
             )}
             <form onSubmit={showEditItemModal ? updateItem : addItem}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="itemName" className="block text-sm font-medium text-gray-900 mb-2">Name</label>
+                  <label htmlFor="itemName" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Name</label>
                   <input
                     id="itemName"
                     type="text"
                     value={itemName}
                     onChange={(e) => setItemName(e.target.value)}
                     required
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="e.g., Coffee Maker"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-900 mb-2">Description</label>
+                  <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Description</label>
                   <textarea
                     id="itemDescription"
                     value={itemDescription}
                     onChange={(e) => setItemDescription(e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="Optional description"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="itemLabels" className="block text-sm font-medium text-gray-900 mb-2">Labels</label>
+                  <label htmlFor="itemLabels" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Labels</label>
                   {itemLabels.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {itemLabels.map((label) => (
-                        <span key={label} className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full text-xs">
+                        <span key={label} className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-full text-xs">
                           {label}
-                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-gray-900">
+                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-gray-900 dark:hover:text-gray-100">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -646,17 +649,17 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       onChange={(e) => handleLabelInputChange(e.target.value)}
                       onKeyDown={handleLabelInputKeyDown}
                       onFocus={() => fetchAvailableLabels()}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                       placeholder="Type and press Enter to add"
                     />
                     {showLabelSuggestions && filteredLabelSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-sm max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm max-h-48 overflow-y-auto">
                         {filteredLabelSuggestions.map((label) => (
                           <button
                             key={label.id}
                             type="button"
                             onClick={() => addLabel(label.name)}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-900 text-sm"
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
                           >
                             {label.name}
                           </button>
@@ -668,12 +671,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
                 {showEditItemModal && availableBoxes.length > 0 && (
                   <div>
-                    <label htmlFor="destinationBox" className="block text-sm font-medium text-gray-900 mb-2">Move to Different Box</label>
+                    <label htmlFor="destinationBox" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Move to Different Box</label>
                     <select
                       id="destinationBox"
                       value={selectedDestinationBoxId}
                       onChange={(e) => setSelectedDestinationBoxId(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                     >
                       <option value="">Keep in current box</option>
                       {availableBoxes.map((box) => (
@@ -684,10 +687,10 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">Photo</label>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Photo</label>
                   {showEditItemModal && editingItem?.imagePath && !itemImage && (
                     <div className="mb-3">
-                      <div className="relative w-full h-40 bg-gray-50 rounded-lg overflow-hidden">
+                      <div className="relative w-full h-40 bg-gray-50 dark:bg-gray-950 rounded-lg overflow-hidden">
                         <Image src={editingItem.imagePath} alt="Current item photo" fill className="object-cover" />
                       </div>
                     </div>
@@ -703,7 +706,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     />
                     <label
                       htmlFor="itemImage"
-                      className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-dashed border-gray-300 rounded-lg hover:border-gray-400 transition cursor-pointer text-gray-500 hover:text-gray-700 text-sm"
+                      className="flex items-center justify-center gap-2 w-full px-4 py-3 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-400 dark:hover:border-gray-500 transition cursor-pointer text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 text-sm"
                     >
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -721,14 +724,14 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 <button
                   type="button"
                   onClick={closeModal}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700 text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-gray-700 dark:text-gray-300 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {submitting ? "Saving..." : showEditItemModal ? "Update" : "Add"}
                 </button>
@@ -740,12 +743,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
       {showQRModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-sm w-full p-6">
+          <div className="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">QR Code</h2>
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">QR Code</h2>
               <button
                 onClick={() => setShowQRModal(false)}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -756,24 +759,24 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               {qrCodeImage && (
                 <Image src={qrCodeImage} alt="QR Code" width={192} height={192} className="mb-3" />
               )}
-              <p className="text-sm text-gray-500 mb-1">{box.name}</p>
-              <p className="text-xs text-gray-400 mb-4">Scan to view box contents</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">{box.name}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">Scan to view box contents</p>
               <div className="flex gap-3 w-full">
                 <button
                   onClick={() => setShowQRModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700 text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-gray-700 dark:text-gray-300 text-sm"
                 >
                   Close
                 </button>
                 <button
                   onClick={downloadQRCode}
-                  className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition font-medium text-sm"
+                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
                 >
                   Download
                 </button>
                 <button
                   onClick={printQRCode}
-                  className="flex-1 border border-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 transition font-medium text-sm"
+                  className="flex-1 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-sm"
                 >
                   Print
                 </button>

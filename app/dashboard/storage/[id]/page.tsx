@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import ThemeToggle from "@/app/components/ThemeToggle";
 
 interface Label {
   id: string;
@@ -427,13 +428,14 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b border-gray-200">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+      <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center h-14">
-            <Link href="/dashboard/storage" className="text-sm text-gray-500 hover:text-gray-900 transition">
+          <div className="flex justify-between items-center h-14">
+            <Link href="/dashboard/storage" className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition">
               &larr; Back to Storage Rooms
             </Link>
+            <ThemeToggle />
           </div>
         </div>
       </nav>
@@ -441,11 +443,11 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <div className="mb-6">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">{storageRoomName}</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold text-gray-900 dark:text-gray-100">{storageRoomName}</h1>
             {!loading && boxes.length > 0 && (
               <button
                 onClick={() => setShowNewBoxModal(true)}
-                className="w-full sm:w-auto bg-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 transition font-medium text-sm"
+                className="w-full sm:w-auto bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
               >
                 New Box
               </button>
@@ -456,7 +458,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
         {loading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white border border-gray-200 rounded-lg p-5">
+              <div key={i} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg p-5">
                 <div className="flex justify-between items-center">
                   <div>
                     <div className="animate-skeleton h-5 w-32 mb-2"></div>
@@ -468,15 +470,15 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
             ))}
           </div>
         ) : boxes.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-lg border border-gray-200">
-            <svg className="w-12 h-12 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center py-16 bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800">
+            <svg className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
-            <p className="text-gray-900 mb-1">No boxes yet</p>
-            <p className="text-gray-400 text-sm mb-5">Create your first box in this room</p>
+            <p className="text-gray-900 dark:text-gray-100 mb-1">No boxes yet</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mb-5">Create your first box in this room</p>
             <button
               onClick={() => setShowNewBoxModal(true)}
-              className="bg-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 transition font-medium text-sm"
+              className="bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
             >
               Create Box
             </button>
@@ -484,20 +486,20 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
         ) : (
           <div className="space-y-3">
             {boxes.map((box) => (
-              <div key={box.id} className="bg-white border border-gray-200 rounded-lg">
+              <div key={box.id} className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg">
                 <div
                   onClick={() => toggleBox(box.id)}
-                  className="p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition"
+                  className="p-4 sm:p-5 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition"
                 >
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-medium text-gray-900">{box.name}</h3>
-                        <span className="text-sm text-gray-400">
+                        <h3 className="font-medium text-gray-900 dark:text-gray-100">{box.name}</h3>
+                        <span className="text-sm text-gray-400 dark:text-gray-500">
                           {box._count?.items || 0} items
                         </span>
                         <svg
-                          className={`w-4 h-4 text-gray-400 transition-transform ${
+                          className={`w-4 h-4 text-gray-400 dark:text-gray-500 transition-transform ${
                             expandedBoxId === box.id ? 'transform rotate-180' : ''
                           }`}
                           fill="none"
@@ -511,7 +513,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     <div className="flex gap-1.5">
                       <button
                         onClick={(e) => generateQRCode(box, e)}
-                        className="text-gray-400 hover:text-gray-600 p-1 transition"
+                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition"
                         title="Generate QR Code"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -520,7 +522,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       </button>
                       <button
                         onClick={(e) => startEditBox(box, e)}
-                        className="text-gray-400 hover:text-gray-600 p-1 transition"
+                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition"
                         title="Edit box"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -529,7 +531,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       </button>
                       <button
                         onClick={(e) => deleteBox(box.id, e)}
-                        className="text-gray-400 hover:text-red-500 p-1 transition"
+                        className="text-gray-400 dark:text-gray-500 hover:text-red-500 p-1 transition"
                         title="Delete box"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -539,7 +541,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       <Link
                         href={`/dashboard/box/${box.id}`}
                         onClick={(e) => e.stopPropagation()}
-                        className="text-gray-400 hover:text-gray-600 p-1 transition"
+                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition"
                         title="Open box page"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -551,28 +553,28 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 </div>
 
                 {expandedBoxId === box.id && (
-                  <div className="border-t border-gray-100 p-4 sm:p-5">
+                  <div className="border-t border-gray-100 dark:border-gray-800 p-4 sm:p-5">
                     {loadingItems === box.id ? (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {[1, 2].map((i) => (
-                          <div key={i} className="bg-gray-50 rounded-lg p-4">
+                          <div key={i} className="bg-gray-50 dark:bg-gray-950 rounded-lg p-4">
                             <div className="animate-skeleton h-4 w-24 mb-2"></div>
                             <div className="animate-skeleton h-3 w-16"></div>
                           </div>
                         ))}
                       </div>
                     ) : !box.items || box.items.length === 0 ? (
-                      <p className="text-center py-4 text-gray-400 text-sm">No items in this box</p>
+                      <p className="text-center py-4 text-gray-400 dark:text-gray-500 text-sm">No items in this box</p>
                     ) : (
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                         {box.items.map((item) => (
                           <div
                             key={item.id}
                             onClick={() => startEditItem(item)}
-                            className="bg-white border border-gray-100 rounded-lg hover:border-gray-200 transition overflow-hidden cursor-pointer"
+                            className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg hover:border-gray-200 dark:hover:border-gray-700 transition overflow-hidden cursor-pointer"
                           >
                             {item.imagePath && (
-                              <div className="relative w-full h-40 bg-gray-100">
+                              <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-800">
                                 <Image
                                   src={item.imagePath}
                                   alt={item.name}
@@ -583,13 +585,13 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                             )}
                             <div className="p-3">
                               <div className="flex justify-between items-start mb-1">
-                                <h4 className="font-medium text-gray-900 text-sm">{item.name}</h4>
+                                <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.name}</h4>
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     deleteItem(item.id, box.id);
                                   }}
-                                  className="text-gray-400 hover:text-red-500 p-0.5 transition"
+                                  className="text-gray-400 dark:text-gray-500 hover:text-red-500 p-0.5 transition"
                                 >
                                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -601,7 +603,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                                   {item.labels.map((itemLabel) => (
                                     <span
                                       key={itemLabel.label.id}
-                                      className="inline-block bg-gray-100 text-gray-500 text-xs px-1.5 py-0.5 rounded"
+                                      className="inline-block bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 text-xs px-1.5 py-0.5 rounded"
                                     >
                                       {itemLabel.label.name}
                                     </span>
@@ -609,7 +611,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                                 </div>
                               )}
                               {item.description && (
-                                <p className="text-gray-400 text-xs">{item.description}</p>
+                                <p className="text-gray-400 dark:text-gray-500 text-xs">{item.description}</p>
                               )}
                             </div>
                           </div>
@@ -626,11 +628,11 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
       {showNewBoxModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 flex flex-col justify-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">New Box</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 flex flex-col justify-center">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">New Box</h2>
             <form onSubmit={createBox}>
               <div className="mb-4">
-                <label htmlFor="boxName" className="block text-sm font-medium text-gray-900 mb-2">Name</label>
+                <label htmlFor="boxName" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Name</label>
                 <input
                   id="boxName"
                   type="text"
@@ -638,7 +640,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                   onChange={(e) => setNewBoxName(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                   placeholder="e.g., Kitchen Items, Winter Clothes"
                 />
               </div>
@@ -646,14 +648,14 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <button
                   type="button"
                   onClick={() => { setShowNewBoxModal(false); setNewBoxName(""); }}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700 text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-gray-700 dark:text-gray-300 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={creatingBox}
-                  className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {creatingBox ? "Creating..." : "Create"}
                 </button>
@@ -665,11 +667,11 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
       {showEditBoxModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 flex flex-col justify-center">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Rename Box</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 flex flex-col justify-center">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Rename Box</h2>
             <form onSubmit={renameBox}>
               <div className="mb-4">
-                <label htmlFor="editBoxName" className="block text-sm font-medium text-gray-900 mb-2">Name</label>
+                <label htmlFor="editBoxName" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Name</label>
                 <input
                   id="editBoxName"
                   type="text"
@@ -677,7 +679,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                   onChange={(e) => setEditBoxName(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                   placeholder="e.g., Kitchen Items, Winter Clothes"
                 />
               </div>
@@ -685,14 +687,14 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <button
                   type="button"
                   onClick={() => { setShowEditBoxModal(false); setEditBoxName(""); setEditingBox(null); }}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700 text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-gray-700 dark:text-gray-300 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={updatingBox}
-                  className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {updatingBox ? "Saving..." : "Save"}
                 </button>
@@ -704,43 +706,43 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
       {showEditItemModal && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-0 sm:p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 sm:my-8 overflow-y-auto">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Edit Item</h2>
+          <div className="bg-white dark:bg-gray-900 rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 sm:my-8 overflow-y-auto">
+            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Edit Item</h2>
             <form onSubmit={updateItem}>
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="itemName" className="block text-sm font-medium text-gray-900 mb-2">Name</label>
+                  <label htmlFor="itemName" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Name</label>
                   <input
                     id="itemName"
                     type="text"
                     value={itemName}
                     onChange={(e) => setItemName(e.target.value)}
                     required
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="e.g., Coffee Maker"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-900 mb-2">Description</label>
+                  <label htmlFor="itemDescription" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Description</label>
                   <textarea
                     id="itemDescription"
                     value={itemDescription}
                     onChange={(e) => setItemDescription(e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="Optional description"
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="itemLabels" className="block text-sm font-medium text-gray-900 mb-2">Labels</label>
+                  <label htmlFor="itemLabels" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Labels</label>
                   {itemLabels.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-2">
                       {itemLabels.map((label) => (
-                        <span key={label} className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full text-xs">
+                        <span key={label} className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-full text-xs">
                           {label}
-                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-gray-900">
+                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-gray-900 dark:hover:text-gray-100">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -757,17 +759,17 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       onChange={(e) => handleLabelInputChange(e.target.value)}
                       onKeyDown={handleLabelInputKeyDown}
                       onFocus={() => fetchAvailableLabels()}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                       placeholder="Type and press Enter to add"
                     />
                     {showLabelSuggestions && filteredLabelSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-sm max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg shadow-sm max-h-48 overflow-y-auto">
                         {filteredLabelSuggestions.map((label) => (
                           <button
                             key={label.id}
                             type="button"
                             onClick={() => addLabel(label.name)}
-                            className="w-full text-left px-4 py-2 hover:bg-gray-50 text-gray-900 text-sm"
+                            className="w-full text-left px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 text-gray-900 dark:text-gray-100 text-sm"
                           >
                             {label.name}
                           </button>
@@ -778,10 +780,10 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-2">Photo</label>
+                  <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Photo</label>
                   {editingItem?.imagePath && !itemImage && (
                     <div className="mb-3">
-                      <div className="relative w-full h-40 bg-gray-50 rounded-lg overflow-hidden">
+                      <div className="relative w-full h-40 bg-gray-50 dark:bg-gray-950 rounded-lg overflow-hidden">
                         <Image src={editingItem.imagePath} alt="Current item photo" fill className="object-cover" />
                       </div>
                     </div>
@@ -790,7 +792,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     type="file"
                     accept="image/*"
                     onChange={(e) => setItemImage(e.target.files?.[0] || null)}
-                    className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-gray-200 file:text-sm file:font-medium file:bg-white file:text-gray-700 hover:file:bg-gray-50"
+                    className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-gray-200 dark:file:border-gray-700 file:text-sm file:font-medium file:bg-white dark:file:bg-gray-800 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-50 dark:hover:file:bg-gray-700"
                   />
                 </div>
               </div>
@@ -799,14 +801,14 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <button
                   type="button"
                   onClick={closeItemModal}
-                  className="flex-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-gray-50 transition font-medium text-gray-700 text-sm"
+                  className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-gray-700 dark:text-gray-300 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {submitting ? "Saving..." : "Save"}
                 </button>
@@ -818,14 +820,14 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
       {showQRModal && selectedBox && (
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-sm w-full p-6">
+          <div className="bg-white dark:bg-gray-900 rounded-lg max-w-sm w-full p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                 QR Code
               </h2>
               <button
                 onClick={() => { setShowQRModal(false); setSelectedBox(null); setQrCodeImage(""); }}
-                className="text-gray-400 hover:text-gray-600 transition"
+                className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -835,19 +837,19 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
             <div className="flex flex-col items-center">
               <img src={qrCodeImage} alt="QR Code" className="w-48 h-48 mb-3" />
-              <p className="text-sm text-gray-500 text-center mb-1">{selectedBox.name}</p>
-              <p className="text-xs text-gray-400 text-center mb-4">Scan to view box contents</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 text-center mb-1">{selectedBox.name}</p>
+              <p className="text-xs text-gray-400 dark:text-gray-500 text-center mb-4">Scan to view box contents</p>
               <div className="flex gap-3 w-full">
                 <a
                   href={qrCodeImage}
                   download={`${selectedBox.name}-qr-code.png`}
-                  className="flex-1 bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 transition font-medium text-center text-sm"
+                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-center text-sm"
                 >
                   Download
                 </a>
                 <button
                   onClick={printQRCode}
-                  className="flex-1 border border-gray-200 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition font-medium text-sm"
+                  className="flex-1 border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-sm"
                 >
                   Print
                 </button>

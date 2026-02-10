@@ -62,13 +62,13 @@ function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="max-w-md w-full bg-white rounded-lg border border-gray-200 p-8 text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Invalid Link</h1>
-          <p className="text-gray-500 mb-6">This password reset link is invalid or has expired.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4">
+        <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-8 text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">Invalid Link</h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">This password reset link is invalid or has expired.</p>
           <Link
             href="/auth/forgot-password"
-            className="text-gray-900 hover:underline font-medium"
+            className="text-gray-900 dark:text-gray-100 hover:underline font-medium"
           >
             Request a new reset link
           </Link>
@@ -78,18 +78,18 @@ function ResetPasswordForm() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-6">
-      <div className="max-w-md w-full bg-white rounded-lg border border-gray-200 p-6 sm:p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 py-6">
+      <div className="max-w-md w-full bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 p-6 sm:p-8">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
             Reset Password
           </h1>
-          <p className="text-gray-500">Enter your new password</p>
+          <p className="text-gray-500 dark:text-gray-400">Enter your new password</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 px-4 py-3 rounded">
               {error}
             </div>
           )}
@@ -97,7 +97,7 @@ function ResetPasswordForm() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-900 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2"
             >
               New Password
             </label>
@@ -108,7 +108,7 @@ function ResetPasswordForm() {
               onChange={(e) => setPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
               placeholder="••••••••"
             />
           </div>
@@ -116,7 +116,7 @@ function ResetPasswordForm() {
           <div>
             <label
               htmlFor="confirmPassword"
-              className="block text-sm font-medium text-gray-900 mb-2"
+              className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2"
             >
               Confirm New Password
             </label>
@@ -127,7 +127,7 @@ function ResetPasswordForm() {
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
               minLength={6}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-900 focus:border-transparent text-gray-900 placeholder:text-gray-400"
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
               placeholder="••••••••"
             />
           </div>
@@ -135,7 +135,7 @@ function ResetPasswordForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
+            className="w-full bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 py-2 px-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed font-medium transition"
           >
             {loading ? "Resetting..." : "Reset Password"}
           </button>
@@ -148,7 +148,7 @@ function ResetPasswordForm() {
 export default function ResetPassword() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
         <div className="animate-skeleton h-6 w-32"></div>
       </div>
     }>

@@ -1,9 +1,15 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  color-scheme: light;
+}
+
+.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
@@ -28,4 +34,8 @@ body {
   animation: skeleton-pulse 1.5s ease-in-out infinite;
   background-color: #e5e7eb;
   border-radius: 0.25rem;
+}
+
+.dark .animate-skeleton {
+  background-color: #374151;
 }
