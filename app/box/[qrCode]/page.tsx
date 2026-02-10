@@ -136,7 +136,7 @@ export default function PublicBoxView({
                 onClick={() => setViewMode("grid")}
                 className={`px-3 py-1.5 rounded-md transition text-sm ${
                   viewMode === "grid"
-                    ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                    ? "bg-indigo-600 text-white dark:bg-indigo-500"
                     : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                 }`}
               >
@@ -148,7 +148,7 @@ export default function PublicBoxView({
                 onClick={() => setViewMode("list")}
                 className={`px-3 py-1.5 rounded-md transition text-sm ${
                   viewMode === "list"
-                    ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                    ? "bg-indigo-600 text-white dark:bg-indigo-500"
                     : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                 }`}
               >

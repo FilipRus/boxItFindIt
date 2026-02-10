@@ -235,7 +235,7 @@ export default function StorageRoomsPage() {
               <ThemeToggle />
               <button
                 onClick={() => signOut({ callbackUrl: "/auth/signin" })}
-                className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition"
+                className="text-sm text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
               >
                 Sign Out
               </button>
@@ -254,12 +254,12 @@ export default function StorageRoomsPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search items, boxes, or rooms..."
-                  className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 text-sm bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 text-sm bg-white dark:bg-gray-800"
                 />
               </div>
               <button
                 onClick={() => setShowNewRoomModal(true)}
-                className="w-full sm:w-auto bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-5 py-2.5 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+                className="w-full sm:w-auto bg-indigo-600 text-white dark:bg-indigo-500 px-5 py-2.5 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
               >
                 New Room
               </button>
@@ -391,7 +391,7 @@ export default function StorageRoomsPage() {
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-5">Create your first room to get started</p>
             <button
               onClick={() => setShowNewRoomModal(true)}
-              className="bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-5 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+              className="bg-indigo-600 text-white dark:bg-indigo-500 px-5 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
             >
               Create Storage Room
             </button>
@@ -415,7 +415,7 @@ export default function StorageRoomsPage() {
                         e.stopPropagation();
                         startEditRoom(room);
                       }}
-                      className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition"
+                      className="text-amber-400 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300 p-1 transition"
                     >
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -461,7 +461,7 @@ export default function StorageRoomsPage() {
                   onChange={(e) => setNewRoomName(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                   placeholder="e.g., Basement, Garage, Attic"
                 />
               </div>
@@ -479,7 +479,7 @@ export default function StorageRoomsPage() {
                 <button
                   type="submit"
                   disabled={creatingRoom}
-                  className="flex-1 bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {creatingRoom ? "Creating..." : "Create"}
                 </button>
@@ -508,7 +508,7 @@ export default function StorageRoomsPage() {
                   onChange={(e) => setEditRoomName(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                   placeholder="e.g., Basement, Garage, Attic"
                 />
               </div>
@@ -527,7 +527,7 @@ export default function StorageRoomsPage() {
                 <button
                   type="submit"
                   disabled={updatingRoom}
-                  className="flex-1 bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900 px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {updatingRoom ? "Saving..." : "Save"}
                 </button>

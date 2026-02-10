@@ -442,7 +442,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 </button>
                 <button
                   onClick={() => setShowAddItemModal(true)}
-                  className="w-full sm:w-auto bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+                  className="w-full sm:w-auto bg-indigo-600 text-white dark:bg-indigo-500 px-5 py-2.5 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
                 >
                   Add Item
                 </button>
@@ -458,7 +458,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   onClick={() => setViewMode("grid")}
                   className={`px-3 py-1.5 rounded-md transition text-sm ${
                     viewMode === "grid"
-                      ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                      ? "bg-indigo-600 text-white dark:bg-indigo-500"
                       : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                   }`}
                 >
@@ -470,7 +470,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   onClick={() => setViewMode("list")}
                   className={`px-3 py-1.5 rounded-md transition text-sm ${
                     viewMode === "list"
-                      ? "bg-gray-900 text-white dark:bg-gray-100 dark:text-gray-900"
+                      ? "bg-indigo-600 text-white dark:bg-indigo-500"
                       : "text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                   }`}
                 >
@@ -492,7 +492,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-5">Add your first item to this box</p>
             <button
               onClick={() => setShowAddItemModal(true)}
-              className="bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+              className="bg-indigo-600 text-white dark:bg-indigo-500 px-5 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
             >
               Add Item
             </button>
@@ -608,7 +608,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     value={itemName}
                     onChange={(e) => setItemName(e.target.value)}
                     required
-                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="e.g., Coffee Maker"
                   />
                 </div>
@@ -620,7 +620,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     value={itemDescription}
                     onChange={(e) => setItemDescription(e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="Optional description"
                   />
                 </div>
@@ -632,7 +632,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       {itemLabels.map((label) => (
                         <span key={label} className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-full text-xs">
                           {label}
-                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-gray-900 dark:hover:text-gray-100">
+                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-red-500 dark:hover:text-red-400">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -649,7 +649,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       onChange={(e) => handleLabelInputChange(e.target.value)}
                       onKeyDown={handleLabelInputKeyDown}
                       onFocus={() => fetchAvailableLabels()}
-                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                       placeholder="Type and press Enter to add"
                     />
                     {showLabelSuggestions && filteredLabelSuggestions.length > 0 && (
@@ -676,7 +676,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       id="destinationBox"
                       value={selectedDestinationBoxId}
                       onChange={(e) => setSelectedDestinationBoxId(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
                     >
                       <option value="">Keep in current box</option>
                       {availableBoxes.map((box) => (
@@ -731,7 +731,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {submitting ? "Saving..." : showEditItemModal ? "Update" : "Add"}
                 </button>
@@ -770,7 +770,7 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 </button>
                 <button
                   onClick={downloadQRCode}
-                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
                 >
                   Download
                 </button>

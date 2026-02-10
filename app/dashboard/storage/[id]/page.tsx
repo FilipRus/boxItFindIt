@@ -447,7 +447,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
             {!loading && boxes.length > 0 && (
               <button
                 onClick={() => setShowNewBoxModal(true)}
-                className="w-full sm:w-auto bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2.5 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+                className="w-full sm:w-auto bg-indigo-600 text-white dark:bg-indigo-500 px-5 py-2.5 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
               >
                 New Box
               </button>
@@ -478,7 +478,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
             <p className="text-gray-400 dark:text-gray-500 text-sm mb-5">Create your first box in this room</p>
             <button
               onClick={() => setShowNewBoxModal(true)}
-              className="bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-5 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-sm"
+              className="bg-indigo-600 text-white dark:bg-indigo-500 px-5 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
             >
               Create Box
             </button>
@@ -513,7 +513,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     <div className="flex gap-1.5">
                       <button
                         onClick={(e) => generateQRCode(box, e)}
-                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition"
+                        className="text-indigo-400 hover:text-indigo-600 dark:text-indigo-400 dark:hover:text-indigo-300 p-1 transition"
                         title="Generate QR Code"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -522,7 +522,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       </button>
                       <button
                         onClick={(e) => startEditBox(box, e)}
-                        className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 p-1 transition"
+                        className="text-amber-400 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300 p-1 transition"
                         title="Edit box"
                       >
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -640,7 +640,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                   onChange={(e) => setNewBoxName(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                   placeholder="e.g., Kitchen Items, Winter Clothes"
                 />
               </div>
@@ -655,7 +655,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <button
                   type="submit"
                   disabled={creatingBox}
-                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {creatingBox ? "Creating..." : "Create"}
                 </button>
@@ -679,7 +679,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                   onChange={(e) => setEditBoxName(e.target.value)}
                   required
                   autoFocus
-                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                   placeholder="e.g., Kitchen Items, Winter Clothes"
                 />
               </div>
@@ -694,7 +694,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <button
                   type="submit"
                   disabled={updatingBox}
-                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {updatingBox ? "Saving..." : "Save"}
                 </button>
@@ -718,7 +718,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     value={itemName}
                     onChange={(e) => setItemName(e.target.value)}
                     required
-                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="e.g., Coffee Maker"
                   />
                 </div>
@@ -730,7 +730,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     value={itemDescription}
                     onChange={(e) => setItemDescription(e.target.value)}
                     rows={3}
-                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                    className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                     placeholder="Optional description"
                   />
                 </div>
@@ -742,7 +742,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       {itemLabels.map((label) => (
                         <span key={label} className="inline-flex items-center gap-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-full text-xs">
                           {label}
-                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-gray-900 dark:hover:text-gray-100">
+                          <button type="button" onClick={() => removeLabel(label)} className="hover:text-red-500 dark:hover:text-red-400">
                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -759,7 +759,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                       onChange={(e) => handleLabelInputChange(e.target.value)}
                       onKeyDown={handleLabelInputKeyDown}
                       onFocus={() => fetchAvailableLabels()}
-                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-gray-900 dark:focus:ring-gray-100 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-600 bg-white dark:bg-gray-800"
                       placeholder="Type and press Enter to add"
                     />
                     {showLabelSuggestions && filteredLabelSuggestions.length > 0 && (
@@ -808,7 +808,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <button
                   type="submit"
                   disabled={submitting}
-                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white px-4 py-2 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium disabled:opacity-50 text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium disabled:opacity-50 text-sm"
                 >
                   {submitting ? "Saving..." : "Save"}
                 </button>
@@ -843,7 +843,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                 <a
                   href={qrCodeImage}
                   download={`${selectedBox.name}-qr-code.png`}
-                  className="flex-1 bg-gray-900 dark:bg-gray-100 dark:text-gray-900 text-white py-2 px-4 rounded-lg hover:bg-gray-800 dark:hover:bg-gray-200 transition font-medium text-center text-sm"
+                  className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 py-2 px-4 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-center text-sm"
                 >
                   Download
                 </a>
