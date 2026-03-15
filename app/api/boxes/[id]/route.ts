@@ -23,6 +23,13 @@ export async function GET(
       },
       include: {
         items: {
+          include: {
+            labels: {
+              include: {
+                label: true,
+              },
+            },
+          },
           orderBy: {
             createdAt: "desc",
           },

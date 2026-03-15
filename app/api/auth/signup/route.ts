@@ -40,7 +40,12 @@ export async function POST(request: NextRequest) {
     });
 
     // Send verification email
-    await sendVerificationEmail(email, verificationToken);
+    const emailResult = await sendVerificationEmail(email, verificationToken);
+
+    if (!emailResult.success) {
+      console.error("Failed to send verification email:", emailResult.error);
+      // Still return success for account creation, but note email failed
+    }
 
     return NextResponse.json(
       {

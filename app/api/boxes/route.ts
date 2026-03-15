@@ -28,7 +28,6 @@ export async function GET(request: NextRequest) {
                   OR: [
                     { name: { contains: search } },
                     { description: { contains: search } },
-                    { category: { contains: search } },
                   ],
                 },
               },

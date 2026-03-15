@@ -42,7 +42,6 @@ export async function GET(
                   OR: [
                     { name: { contains: search } },
                     { description: { contains: search } },
-                    { category: { contains: search } },
                   ],
                 },
               },
@@ -51,7 +50,15 @@ export async function GET(
         }),
       },
       include: {
-        items: true,
+        items: {
+          include: {
+            labels: {
+              include: {
+                label: true,
+              },
+            },
+          },
+        },
         _count: {
           select: {
             items: true,

@@ -5,12 +5,21 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 
+interface Label {
+  id: string;
+  name: string;
+}
+
+interface ItemLabel {
+  label: Label;
+}
+
 interface Item {
   id: string;
   name: string;
   description: string | null;
-  category: string | null;
   imagePath: string | null;
+  labels?: ItemLabel[];
 }
 
 interface Box {
@@ -33,8 +42,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
-  const [itemCategory, setItemCategory] = useState("");
   const [itemImage, setItemImage] = useState<File | null>(null);
+  const [itemLabels, setItemLabels] = useState<string[]>([]);
+  const [labelInput, setLabelInput] = useState("");
+  const [availableLabels, setAvailableLabels] = useState<Label[]>([]);
+  const [showLabelSuggestions, setShowLabelSuggestions] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
@@ -59,6 +71,24 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [id]);
+
+  useEffect(() => {
+    const handleEscapeKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (showEditItemModal || showAddItemModal) {
+          closeModal();
+        }
+      }
+    };
+
+    if (showEditItemModal || showAddItemModal) {
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [showEditItemModal, showAddItemModal]);
 
   const fetchBox = async () => {
     try {
@@ -98,6 +128,18 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     }
   };
 
+  const fetchAvailableLabels = async () => {
+    try {
+      const response = await fetch('/api/labels');
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableLabels(data.labels);
+      }
+    } catch (error) {
+      console.error("Error fetching labels:", error);
+    }
+  };
+
   const generateQRCode = async () => {
     if (!box) return;
 
@@ -125,6 +167,35 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     link.click();
   };
 
+  const printQRCode = () => {
+    if (!box || !qrCodeImage) return;
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+    printWindow.document.write(`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>QR Code - ${box.name}</title>
+          <style>
+            @page { size: auto; margin: 10mm; }
+            body { display: flex; justify-content: center; align-items: flex-start; padding-top: 10mm; font-family: sans-serif; }
+            .qr-label { text-align: center; width: 50mm; }
+            .qr-label img { width: 50mm; height: 50mm; }
+            .qr-label p { margin: 4mm 0 0; font-size: 12pt; font-weight: bold; word-break: break-word; }
+          </style>
+        </head>
+        <body>
+          <div class="qr-label">
+            <img src="${qrCodeImage}" alt="QR Code" />
+            <p>${box.name}</p>
+          </div>
+          <script>window.onload = function() { window.print(); }</script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
+
   const addItem = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -133,8 +204,8 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       const formData = new FormData();
       formData.append("name", itemName);
       if (itemDescription) formData.append("description", itemDescription);
-      if (itemCategory) formData.append("category", itemCategory);
       if (itemImage) formData.append("image", itemImage);
+      formData.append("labels", JSON.stringify(itemLabels));
 
       const response = await fetch(`/api/boxes/${id}/items`, {
         method: "POST",
@@ -149,8 +220,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         // Clear form but keep modal open
         setItemName("");
         setItemDescription("");
-        setItemCategory("");
         setItemImage(null);
+        setItemLabels([]);
+        setLabelInput("");
 
         // Show success message
         setShowSuccessMessage(true);
@@ -159,6 +231,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
         // Reset file input
         const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
         if (fileInput) fileInput.value = '';
+
+        // Refresh available labels
+        fetchAvailableLabels();
       }
     } catch (error) {
       console.error("Error adding item:", error);
@@ -171,9 +246,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     setEditingItem(item);
     setItemName(item.name);
     setItemDescription(item.description || "");
-    setItemCategory(item.category || "");
+    setItemLabels(item.labels?.map(il => il.label.name) || []);
+    setLabelInput("");
     setSelectedDestinationBoxId("");
     fetchAvailableBoxes();
+    fetchAvailableLabels();
     setShowEditItemModal(true);
   };
 
@@ -186,9 +263,9 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
       const formData = new FormData();
       formData.append("name", itemName);
       formData.append("description", itemDescription);
-      formData.append("category", itemCategory);
       if (itemImage) formData.append("image", itemImage);
       if (selectedDestinationBoxId) formData.append("destinationBoxId", selectedDestinationBoxId);
+      formData.append("labels", JSON.stringify(itemLabels));
 
       const response = await fetch(`/api/items/${editingItem.id}`, {
         method: "PATCH",
@@ -226,7 +303,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
           // Close modal immediately
           setItemName("");
           setItemDescription("");
-          setItemCategory("");
           setItemImage(null);
           setEditingItem(null);
           setSelectedDestinationBoxId("");
@@ -270,13 +346,48 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     setEditingItem(null);
     setItemName("");
     setItemDescription("");
-    setItemCategory("");
     setItemImage(null);
+    setItemLabels([]);
+    setLabelInput("");
+    setShowLabelSuggestions(false);
     setShowSuccessMessage(false);
     setSelectedDestinationBoxId("");
     setMoveSuccessMessage(false);
     setAvailableBoxes([]);
   };
+
+  const addLabel = (labelName: string) => {
+    const trimmed = labelName.trim();
+    if (trimmed && !itemLabels.includes(trimmed)) {
+      setItemLabels([...itemLabels, trimmed]);
+    }
+    setLabelInput("");
+    setShowLabelSuggestions(false);
+  };
+
+  const removeLabel = (labelName: string) => {
+    setItemLabels(itemLabels.filter(l => l !== labelName));
+  };
+
+  const handleLabelInputChange = (value: string) => {
+    setLabelInput(value);
+    setShowLabelSuggestions(value.length > 0);
+  };
+
+  const handleLabelInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (labelInput.trim()) {
+        addLabel(labelInput);
+      }
+    }
+  };
+
+  const filteredLabelSuggestions = availableLabels.filter(
+    label =>
+      label.name.toLowerCase().includes(labelInput.toLowerCase()) &&
+      !itemLabels.includes(label.name)
+  );
 
   if (loading) {
     return (
@@ -416,10 +527,17 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                       </button>
                     </div>
                   </div>
-                  {item.category && (
-                    <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded mb-2">
-                      {item.category}
-                    </span>
+                  {item.labels && item.labels.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-2">
+                      {item.labels.map((itemLabel) => (
+                        <span
+                          key={itemLabel.label.id}
+                          className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded"
+                        >
+                          {itemLabel.label.name}
+                        </span>
+                      ))}
+                    </div>
                   )}
                   {item.description && (
                     <p className="text-gray-600 text-sm">{item.description}</p>
@@ -464,15 +582,22 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     </div>
                   </div>
                   <div className="flex flex-wrap gap-2 items-center">
-                    {item.category && (
-                      <span className="inline-block bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">
-                        {item.category}
-                      </span>
-                    )}
-                    {item.description && (
-                      <p className="text-gray-600 text-sm flex-1">{item.description}</p>
+                    {item.labels && item.labels.length > 0 && (
+                      <>
+                        {item.labels.map((itemLabel) => (
+                          <span
+                            key={itemLabel.label.id}
+                            className="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded"
+                          >
+                            {itemLabel.label.name}
+                          </span>
+                        ))}
+                      </>
                     )}
                   </div>
+                  {item.description && (
+                    <p className="text-gray-600 text-sm mt-2">{item.description}</p>
+                  )}
                 </div>
               </div>
             ))}
@@ -524,23 +649,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
 
                 <div>
                   <label
-                    htmlFor="itemCategory"
-                    className="block text-sm font-medium text-gray-900 mb-2"
-                  >
-                    Category
-                  </label>
-                  <input
-                    id="itemCategory"
-                    type="text"
-                    value={itemCategory}
-                    onChange={(e) => setItemCategory(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
-                    placeholder="e.g., Kitchen, Electronics"
-                  />
-                </div>
-
-                <div>
-                  <label
                     htmlFor="itemDescription"
                     className="block text-sm font-medium text-gray-900 mb-2"
                   >
@@ -554,6 +662,71 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
                     placeholder="Optional description"
                   />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="itemLabels"
+                    className="block text-sm font-medium text-gray-900 mb-2"
+                  >
+                    Labels
+                  </label>
+
+                  {/* Display current labels */}
+                  {itemLabels.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {itemLabels.map((label) => (
+                        <span
+                          key={label}
+                          className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                        >
+                          {label}
+                          <button
+                            type="button"
+                            onClick={() => removeLabel(label)}
+                            className="hover:text-blue-600"
+                          >
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Label input with autocomplete */}
+                  <div className="relative">
+                    <input
+                      id="itemLabels"
+                      type="text"
+                      value={labelInput}
+                      onChange={(e) => handleLabelInputChange(e.target.value)}
+                      onKeyDown={handleLabelInputKeyDown}
+                      onFocus={() => fetchAvailableLabels()}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 placeholder:text-gray-500"
+                      placeholder="e.g., kitchen, electronics (press Enter to add)"
+                    />
+
+                    {/* Autocomplete suggestions */}
+                    {showLabelSuggestions && filteredLabelSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {filteredLabelSuggestions.map((label) => (
+                          <button
+                            key={label.id}
+                            type="button"
+                            onClick={() => addLabel(label.name)}
+                            className="w-full text-left px-4 py-2 hover:bg-blue-50 text-gray-900 text-sm"
+                          >
+                            {label.name}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Add labels to help organize and find items easily
+                  </p>
                 </div>
 
                 {showEditItemModal && availableBoxes.length > 0 && (
@@ -679,6 +852,12 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
               >
                 Download
+              </button>
+              <button
+                onClick={printQRCode}
+                className="flex-1 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition font-medium"
+              >
+                Print
               </button>
             </div>
           </div>

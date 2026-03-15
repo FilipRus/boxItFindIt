@@ -22,6 +22,7 @@ model User {
   createdAt              DateTime       @default(now())
   updatedAt              DateTime       @updatedAt
   storageRooms           StorageRoom[]
+  labels                 Label[]
 }
 
 model StorageRoom {
@@ -50,17 +51,42 @@ model Box {
 }
 
 model Item {
-  id          String   @id @default(cuid())
+  id          String      @id @default(cuid())
   name        String
   description String?
-  category    String?
   imagePath   String?
   boxId       String
-  box         Box      @relation(fields: [boxId], references: [id], onDelete: Cascade)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  box         Box         @relation(fields: [boxId], references: [id], onDelete: Cascade)
+  labels      ItemLabel[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   @@index([boxId])
   @@index([name])
-  @@index([category])
+}
+
+model Label {
+  id        String      @id @default(cuid())
+  name      String      @unique
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     ItemLabel[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([name])
+}
+
+model ItemLabel {
+  id        String   @id @default(cuid())
+  itemId    String
+  labelId   String
+  item      Item     @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  label     Label    @relation(fields: [labelId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([itemId, labelId])
+  @@index([itemId])
+  @@index([labelId])
 }

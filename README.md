@@ -22,10 +22,10 @@ A full-stack web application for tracking moving box contents using QR codes. Cr
 - **Framework**: Next.js 15 (App Router)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **Database**: SQLite (via Prisma ORM)
+- **Database**: PostgreSQL via Prisma ORM (hosted on Neon)
 - **Authentication**: NextAuth.js v5
 - **QR Codes**: qrcode library
-- **Image Storage**: Local file system
+- **Image Storage**: Cloudinary
 
 ## Prerequisites
 
@@ -47,16 +47,14 @@ A full-stack web application for tracking moving box contents using QR codes. Cr
 
 3. **Set up environment variables**
 
-   The `.env` file should already exist with default values. Update if needed:
+   Copy `.env.example` to `.env.local` and fill in your values:
    ```env
-   DATABASE_URL="file:./dev.db"
-   NEXTAUTH_SECRET="your-secret-key-change-this-in-production"
+   DATABASE_URL="postgresql://user:password@host:5432/database?sslmode=require"
+   NEXTAUTH_SECRET="generate-with-openssl-rand-base64-32"
    NEXTAUTH_URL="http://localhost:3000"
-   ```
-
-   **Important**: Generate a secure secret for production:
-   ```bash
-   openssl rand -base64 32
+   CLOUDINARY_CLOUD_NAME="your-cloud-name"
+   CLOUDINARY_API_KEY="your-api-key"
+   CLOUDINARY_API_SECRET="your-api-secret"
    ```
 
 4. **Initialize the database**
@@ -65,9 +63,9 @@ A full-stack web application for tracking moving box contents using QR codes. Cr
    npx prisma migrate dev
    ```
 
-5. **Create uploads directory**
+5. **Seed demo data (optional)**
    ```bash
-   mkdir -p public/uploads
+   npx prisma db seed
    ```
 
 ## Development
@@ -157,34 +155,14 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
      - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
      - `NEXTAUTH_URL`: Your production URL (e.g., `https://your-app.vercel.app`)
 
-3. **Database Options for Production**
-
-   **Option A: PostgreSQL (Recommended for Production)**
-   - Use [Vercel Postgres](https://vercel.com/storage/postgres) or [Neon](https://neon.tech)
-   - Update `prisma/schema.prisma`:
-     ```prisma
-     datasource db {
-       provider = "postgresql"
-     }
-     ```
-   - Update `DATABASE_URL` in environment variables
+3. **Database**
+   - Uses [Neon](https://neon.tech) PostgreSQL
+   - Set `DATABASE_URL` in Vercel environment variables
    - Run migrations: `npx prisma migrate deploy`
 
-   **Option B: Keep SQLite (Simple Deployments)**
-   - Note: SQLite resets on each deployment with Vercel
-   - Better for testing/demo purposes
-   - Consider using Vercel Blob Storage for persistent uploads
-
-4. **File Upload Storage**
-
-   For production, use cloud storage:
-   - [Vercel Blob](https://vercel.com/docs/storage/vercel-blob)
-   - AWS S3
-   - Cloudinary
-
-   Update item image upload logic in:
-   - `app/api/boxes/[id]/items/route.ts`
-   - `app/api/items/[id]/route.ts`
+4. **Image Storage**
+   - Uses Cloudinary for image uploads
+   - Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` in Vercel environment variables
 
 ### Other Platforms
 

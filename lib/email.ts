@@ -7,7 +7,7 @@ export async function sendPasswordResetEmail(email: string, token: string) {
 
   try {
     await resend.emails.send({
-      from: "BoxIT <onboarding@resend.dev>",
+      from: process.env.EMAIL_FROM || "BoxIT <onboarding@resend.dev>",
       to: email,
       subject: "Reset your password",
       html: `
@@ -61,7 +61,7 @@ export async function sendVerificationEmail(email: string, token: string) {
 
   try {
     await resend.emails.send({
-      from: "BoxIT <onboarding@resend.dev>", // Use your domain when ready
+      from: process.env.EMAIL_FROM || "BoxIT <onboarding@resend.dev>",
       to: email,
       subject: "Verify your email address",
       html: `
