@@ -765,12 +765,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               <p className="text-xs text-gray-400 dark:text-gray-500 mb-4">Scan to view box contents</p>
               <div className="flex gap-3 w-full">
                 <button
-                  onClick={() => setShowQRModal(false)}
-                  className="flex-1 px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition font-medium text-gray-700 dark:text-gray-300 text-sm"
-                >
-                  Close
-                </button>
-                <button
                   onClick={downloadQRCode}
                   className="flex-1 bg-indigo-600 text-white dark:bg-indigo-500 px-4 py-2 rounded-lg hover:bg-indigo-700 dark:hover:bg-indigo-400 transition font-medium text-sm"
                 >
