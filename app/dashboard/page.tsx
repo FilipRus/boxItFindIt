@@ -11,8 +11,8 @@ export default function Dashboard() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-gray-600">Redirecting to storage rooms...</p>
+    <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
+      <p className="text-gray-600 dark:text-gray-400">Redirecting to storage rooms...</p>
     </div>
   );
 }
