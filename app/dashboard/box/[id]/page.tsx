@@ -749,23 +749,6 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                   </div>
                 </div>
 
-                {showEditItemModal && availableBoxes.length > 0 && (
-                  <div>
-                    <label htmlFor="destinationBox" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Move to Different Box</label>
-                    <select
-                      id="destinationBox"
-                      value={selectedDestinationBoxId}
-                      onChange={(e) => setSelectedDestinationBoxId(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
-                    >
-                      <option value="">Keep in current box</option>
-                      {availableBoxes.map((box) => (
-                        <option key={box.id} value={box.id}>{box.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-
                 <div>
                   <label className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Photo</label>
                   {showEditItemModal && editingItem?.imagePath && !itemImage && (
@@ -798,6 +781,23 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                     </label>
                   </div>
                 </div>
+
+                {showEditItemModal && availableBoxes.length > 0 && (
+                  <div>
+                    <label htmlFor="destinationBox" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Move to Different Box</label>
+                    <select
+                      id="destinationBox"
+                      value={selectedDestinationBoxId}
+                      onChange={(e) => setSelectedDestinationBoxId(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800"
+                    >
+                      <option value="">Keep in current box</option>
+                      {availableBoxes.map((box) => (
+                        <option key={box.id} value={box.id}>{box.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 mt-6">
