@@ -20,6 +20,7 @@ interface Item {
   name: string;
   description: string | null;
   imagePath: string | null;
+  inUse: boolean;
   labels?: ItemLabel[];
 }
 
@@ -51,6 +52,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
   // Item editing state
   const [editingItem, setEditingItem] = useState<Item | null>(null);
+  const [editingItemBoxId, setEditingItemBoxId] = useState<string | null>(null);
   const [showEditItemModal, setShowEditItemModal] = useState(false);
   const [itemName, setItemName] = useState("");
   const [itemDescription, setItemDescription] = useState("");
@@ -60,6 +62,9 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
   const [availableLabels, setAvailableLabels] = useState<Label[]>([]);
   const [showLabelSuggestions, setShowLabelSuggestions] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [availableBoxes, setAvailableBoxes] = useState<Array<{ id: string; name: string }>>([]);
+  const [selectedDestinationBoxId, setSelectedDestinationBoxId] = useState<string>("");
+  const [moveSuccessMessage, setMoveSuccessMessage] = useState(false);
 
   // QR code state
   const [showQRModal, setShowQRModal] = useState(false);
@@ -173,6 +178,22 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
       }
     } catch (error) {
       console.error("Error fetching labels:", error);
+    }
+  };
+
+  const fetchAvailableBoxes = async (currentBoxId: string) => {
+    try {
+      const response = await fetch('/api/boxes');
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableBoxes(
+          data.boxes
+            .filter((b: { id: string; name: string }) => b.id !== currentBoxId)
+            .map((b: { id: string; name: string }) => ({ id: b.id, name: b.name }))
+        );
+      }
+    } catch (error) {
+      console.error("Error fetching boxes:", error);
     }
   };
 
@@ -309,13 +330,16 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
     }
   };
 
-  const startEditItem = (item: Item) => {
+  const startEditItem = (item: Item, boxId: string) => {
     setEditingItem(item);
+    setEditingItemBoxId(boxId);
     setItemName(item.name);
     setItemDescription(item.description || "");
     setItemLabels(item.labels?.map(il => il.label.name) || []);
     setLabelInput("");
+    setSelectedDestinationBoxId("");
     fetchAvailableLabels();
+    fetchAvailableBoxes(boxId);
     setShowEditItemModal(true);
   };
 
@@ -329,6 +353,7 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
       formData.append("name", itemName);
       formData.append("description", itemDescription);
       if (itemImage) formData.append("image", itemImage);
+      if (selectedDestinationBoxId) formData.append("destinationBoxId", selectedDestinationBoxId);
       formData.append("labels", JSON.stringify(itemLabels));
 
       const response = await fetch(`/api/items/${editingItem.id}`, {
@@ -338,18 +363,47 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
 
       if (response.ok) {
         const data = await response.json();
-        setBoxes(boxes.map(box => {
-          if (box.items) {
-            return {
-              ...box,
-              items: box.items.map(item =>
-                item.id === editingItem.id ? data.item : item
-              )
-            };
-          }
-          return box;
-        }));
-        closeItemModal();
+
+        if (data.moved) {
+          // Remove item from its current box
+          setBoxes(prev => prev.map(box => {
+            if (box.id === editingItemBoxId && box.items) {
+              return {
+                ...box,
+                items: box.items.filter(item => item.id !== editingItem.id),
+                _count: { items: box._count.items - 1 },
+              };
+            }
+            // If destination box is expanded, add item there
+            if (box.id === selectedDestinationBoxId && box.items) {
+              return {
+                ...box,
+                items: [data.item, ...box.items],
+                _count: { items: box._count.items + 1 },
+              };
+            }
+            return box;
+          }));
+
+          setMoveSuccessMessage(true);
+          setTimeout(() => {
+            setMoveSuccessMessage(false);
+            closeItemModal();
+          }, 2000);
+        } else {
+          setBoxes(prev => prev.map(box => {
+            if (box.items) {
+              return {
+                ...box,
+                items: box.items.map(item =>
+                  item.id === editingItem.id ? data.item : item
+                ),
+              };
+            }
+            return box;
+          }));
+          closeItemModal();
+        }
       }
     } catch (error) {
       console.error("Error updating item:", error);
@@ -383,15 +437,43 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
     }
   };
 
+  const toggleInUse = async (itemId: string, boxId: string) => {
+    try {
+      const response = await fetch(`/api/items/${itemId}/toggle-in-use`, {
+        method: "PATCH",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBoxes(boxes.map(box => {
+          if (box.id === boxId && box.items) {
+            return {
+              ...box,
+              items: box.items.map(item =>
+                item.id === itemId ? { ...item, inUse: data.item.inUse } : item
+              ),
+            };
+          }
+          return box;
+        }));
+      }
+    } catch (error) {
+      console.error("Error toggling in-use:", error);
+    }
+  };
+
   const closeItemModal = () => {
     setShowEditItemModal(false);
     setEditingItem(null);
+    setEditingItemBoxId(null);
     setItemName("");
     setItemDescription("");
     setItemImage(null);
     setItemLabels([]);
     setLabelInput("");
     setShowLabelSuggestions(false);
+    setSelectedDestinationBoxId("");
+    setMoveSuccessMessage(false);
   };
 
   const addLabel = (labelName: string) => {
@@ -570,8 +652,12 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                         {box.items.map((item) => (
                           <div
                             key={item.id}
-                            onClick={() => startEditItem(item)}
-                            className="bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-lg hover:border-gray-200 dark:hover:border-gray-700 transition overflow-hidden cursor-pointer"
+                            onClick={() => startEditItem(item, box.id)}
+                            className={`border rounded-lg hover:shadow-sm transition overflow-hidden cursor-pointer ${
+                              item.inUse
+                                ? "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800"
+                                : "bg-white dark:bg-gray-900 border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700"
+                            }`}
                           >
                             {item.imagePath && (
                               <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-800">
@@ -581,22 +667,47 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                                   fill
                                   className="object-cover"
                                 />
+                                {item.inUse && (
+                                  <div className="absolute top-2 left-2">
+                                    <span className="bg-amber-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">In use</span>
+                                  </div>
+                                )}
                               </div>
                             )}
                             <div className="p-3">
                               <div className="flex justify-between items-start mb-1">
-                                <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.name}</h4>
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    deleteItem(item.id, box.id);
-                                  }}
-                                  className="text-red-400 hover:text-red-500 p-0.5 transition"
-                                >
-                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <h4 className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">{item.name}</h4>
+                                  {item.inUse && !item.imagePath && (
+                                    <span className="flex-shrink-0 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 text-xs font-medium px-1.5 py-0.5 rounded-full">In use</span>
+                                  )}
+                                </div>
+                                <div className="flex items-center gap-1 flex-shrink-0 ml-1">
+                                  <button
+                                    onClick={(e) => { e.stopPropagation(); toggleInUse(item.id, box.id); }}
+                                    title={item.inUse ? "Mark as back in box" : "Mark as in use"}
+                                    className={`p-0.5 transition rounded ${
+                                      item.inUse
+                                        ? "text-amber-500 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300"
+                                        : "text-gray-300 hover:text-amber-400 dark:text-gray-600 dark:hover:text-amber-400"
+                                    }`}
+                                  >
+                                    <svg className="w-4 h-4" fill={item.inUse ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                    </svg>
+                                  </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      deleteItem(item.id, box.id);
+                                    }}
+                                    className="text-red-400 hover:text-red-500 p-0.5 transition"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                  </button>
+                                </div>
                               </div>
                               {item.labels && item.labels.length > 0 && (
                                 <div className="flex flex-wrap gap-1 mb-1">
@@ -708,6 +819,11 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-0 sm:p-4 z-50 overflow-y-auto">
           <div className="bg-white dark:bg-gray-900 rounded-none sm:rounded-lg w-full h-full sm:h-auto sm:max-w-md sm:w-full p-6 sm:my-8 overflow-y-auto">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Edit Item</h2>
+            {moveSuccessMessage && (
+              <div className="mb-4 bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 text-green-700 dark:text-green-400 px-4 py-3 rounded text-sm">
+                Item moved successfully!
+              </div>
+            )}
             <form onSubmit={updateItem}>
               <div className="space-y-4">
                 <div>
@@ -795,6 +911,23 @@ export default function StorageRoomDetail({ params }: { params: Promise<{ id: st
                     className="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border file:border-gray-200 dark:file:border-gray-700 file:text-sm file:font-medium file:bg-white dark:file:bg-gray-800 file:text-gray-700 dark:file:text-gray-300 hover:file:bg-gray-50 dark:hover:file:bg-gray-700"
                   />
                 </div>
+
+                {availableBoxes.length > 0 && (
+                  <div>
+                    <label htmlFor="destinationBox" className="block text-sm font-medium text-gray-900 dark:text-gray-100 mb-2">Move to another box</label>
+                    <select
+                      id="destinationBox"
+                      value={selectedDestinationBoxId}
+                      onChange={(e) => setSelectedDestinationBoxId(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-200 dark:border-gray-800 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:border-transparent text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-800 text-sm"
+                    >
+                      <option value="">Keep in current box</option>
+                      {availableBoxes.map((b) => (
+                        <option key={b.id} value={b.id}>{b.name}</option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 mt-6">

@@ -55,6 +55,7 @@ model Item {
   name        String
   description String?
   imagePath   String?
+  inUse       Boolean     @default(false)
   boxId       String
   box         Box         @relation(fields: [boxId], references: [id], onDelete: Cascade)
   labels      ItemLabel[]

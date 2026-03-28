@@ -1,0 +1,107 @@
+SECURITY AUDIT — BoxIT QR Code Application
+Generated: 2026-03-16
+==========================================
+
+
+CRITICAL
+--------
+
+1. Credentials in Version Control
+   Files: .env.local / .env.production
+   Details: DATABASE_URL, Cloudinary keys, NEXTAUTH_SECRET may be committed to git.
+   Action: Rotate all secrets immediately; add .env* to .gitignore
+
+2. Email Verification Disabled Globally
+   File: lib/auth.ts (lines 37-41)
+   Details: The verification check is commented out; anyone with any email can sign in unverified.
+   Action: Restore the emailVerified check
+
+
+HIGH
+----
+
+3. No Rate Limiting on Auth Endpoints
+   Files: app/api/auth/signup, forgot-password, reset-password
+   Details: Unlimited brute-force attempts possible on all auth flows.
+   Action: Add rate limiting (e.g., upstash/ratelimit or middleware-level)
+
+4. /api/qr Has No Auth Check
+   File: app/api/qr/route.ts
+   Details: Anyone can POST to generate QR codes pointing to arbitrary URLs (phishing vector).
+   Action: Add auth() session check
+
+5. JSON.parse() Without Try/Catch
+   Files: app/api/items/[id]/route.ts (line 117), app/api/boxes/[id]/items/route.ts (line 72)
+   Details: Malformed labelsJson input throws an unhandled 500 error exposing internals.
+   Action: Wrap in try/catch with a proper error response
+
+6. QR Code Too Short — nanoid(10)
+   File: app/api/boxes/route.ts (line 97)
+   Details: 10-character IDs are theoretically enumerable; low entropy for a public access key.
+   Action: Increase to at least nanoid(16)
+
+7. Check-User Endpoint Enables Email Enumeration
+   File: app/api/auth/check-user/route.ts
+   Details: Publicly returns exists: true/false for any email, enabling bulk enumeration.
+   Action: Remove the endpoint or require authentication
+
+8. Weak Password Minimum (6 chars, no complexity)
+   File: app/api/auth/reset-password/route.ts (line 16)
+   Details: No uppercase, number, or symbol requirements enforced.
+   Action: Enforce stronger policy (12+ chars or complexity rules)
+
+
+MEDIUM
+------
+
+9. No CSRF Protection
+   Files: All state-mutating API routes (POST/PATCH/DELETE)
+   Details: No CSRF tokens implemented. NextAuth v5 does not auto-protect custom routes.
+   Action: Implement CSRF validation on mutating endpoints
+
+10. Missing Security Headers
+    Details: No Content-Security-Policy, X-Frame-Options, X-Content-Type-Options,
+             or Strict-Transport-Security headers configured.
+    Action: Add via next.config.ts headers config or middleware
+
+11. Label Schema — Global Unique Instead of Per-User
+    File: prisma/schema.prisma (line 70)
+    Details: name @unique is a global constraint; causes cross-user label name collisions.
+    Action: Change to @@unique([userId, name])
+
+12. Signup Reveals "User Already Exists"
+    File: app/api/auth/signup/route.ts
+    Details: Explicit error message enables account enumeration.
+    Action: Return a generic message regardless of whether the email exists
+
+
+LOW
+---
+
+13. Cloudinary Public ID Extraction Is Fragile
+    File: lib/cloudinary.ts (lines 52-55)
+    Details: URL string splitting to extract public ID breaks if URL format changes; fails silently.
+    Action: Use a more robust extraction method and handle errors explicitly
+
+14. No Security Event Logging
+    Details: No audit trail for failed logins, unauthorized access attempts, or sensitive operations.
+    Action: Add structured logging for security-relevant events
+
+15. No HSTS or CORS Headers
+    Details: Application relies on Next.js defaults; explicit CORS and HSTS config is missing.
+    Action: Configure explicitly in next.config.ts or middleware
+
+
+PRIORITY FIX ORDER
+------------------
+
+ 1. Rotate & remove any committed secrets
+ 2. Enable email verification (lib/auth.ts)
+ 3. Add rate limiting to auth endpoints
+ 4. Add auth check to /api/qr
+ 5. Wrap JSON.parse(labelsJson) in try/catch
+ 6. Increase QR nanoid to 16+ characters
+ 7. Remove or protect /api/auth/check-user
+ 8. Add security headers in next.config.ts
+ 9. Fix label schema uniqueness (@@unique([userId, name]))
+10. Strengthen password policy (12+ chars)
