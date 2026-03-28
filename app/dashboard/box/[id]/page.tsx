@@ -20,6 +20,7 @@ interface Item {
   name: string;
   description: string | null;
   imagePath: string | null;
+  inUse: boolean;
   labels?: ItemLabel[];
 }
 
@@ -335,6 +336,30 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
     }
   };
 
+  const toggleInUse = async (itemId: string) => {
+    try {
+      const response = await fetch(`/api/items/${itemId}/toggle-in-use`, {
+        method: "PATCH",
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setBox((prev) =>
+          prev
+            ? {
+                ...prev,
+                items: prev.items.map((item) =>
+                  item.id === itemId ? { ...item, inUse: data.item.inUse } : item
+                ),
+              }
+            : null
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling in-use:", error);
+    }
+  };
+
   const closeModal = () => {
     setShowAddItemModal(false);
     setShowEditItemModal(false);
@@ -505,24 +530,53 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               <div
                 key={item.id}
                 onClick={() => startEditItem(item)}
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 hover:shadow-sm transition overflow-hidden cursor-pointer"
+                className={`border rounded-lg hover:shadow-sm transition overflow-hidden cursor-pointer ${
+                  item.inUse
+                    ? "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800"
+                    : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
+                }`}
               >
                 {item.imagePath && (
                   <div className="relative w-full h-40 bg-gray-100 dark:bg-gray-800">
                     <Image src={item.imagePath} alt={item.name} fill className="object-cover" />
+                    {item.inUse && (
+                      <div className="absolute top-2 left-2">
+                        <span className="bg-amber-500 text-white text-xs font-medium px-2 py-0.5 rounded-full">In use</span>
+                      </div>
+                    )}
                   </div>
                 )}
                 <div className="p-4">
                   <div className="flex justify-between items-start mb-1">
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.name}</h3>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
-                      className="text-red-400 hover:text-red-500 p-0.5 transition"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">{item.name}</h3>
+                      {item.inUse && !item.imagePath && (
+                        <span className="flex-shrink-0 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 text-xs font-medium px-1.5 py-0.5 rounded-full">In use</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0 ml-1">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleInUse(item.id); }}
+                        title={item.inUse ? "Mark as back in box" : "Mark as in use"}
+                        className={`p-0.5 transition rounded ${
+                          item.inUse
+                            ? "text-amber-500 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300"
+                            : "text-gray-300 hover:text-amber-400 dark:text-gray-600 dark:hover:text-amber-400"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill={item.inUse ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
+                        className="text-red-400 hover:text-red-500 p-0.5 transition"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                   {item.labels && item.labels.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-1">
@@ -546,7 +600,11 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
               <div
                 key={item.id}
                 onClick={() => startEditItem(item)}
-                className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-lg hover:border-gray-300 dark:hover:border-gray-700 transition p-4 flex gap-4 cursor-pointer"
+                className={`border rounded-lg transition p-4 flex gap-4 cursor-pointer ${
+                  item.inUse
+                    ? "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800"
+                    : "bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700"
+                }`}
               >
                 {item.imagePath && (
                   <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
@@ -555,15 +613,35 @@ export default function BoxDetail({ params }: { params: Promise<{ id: string }> 
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-2 mb-1">
-                    <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm">{item.name}</h3>
-                    <button
-                      onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
-                      className="text-red-400 hover:text-red-500 p-0.5 flex-shrink-0 transition"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm truncate">{item.name}</h3>
+                      {item.inUse && (
+                        <span className="flex-shrink-0 bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-400 text-xs font-medium px-1.5 py-0.5 rounded-full">In use</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <button
+                        onClick={(e) => { e.stopPropagation(); toggleInUse(item.id); }}
+                        title={item.inUse ? "Mark as back in box" : "Mark as in use"}
+                        className={`p-0.5 transition rounded ${
+                          item.inUse
+                            ? "text-amber-500 hover:text-amber-600 dark:text-amber-400 dark:hover:text-amber-300"
+                            : "text-gray-300 hover:text-amber-400 dark:text-gray-600 dark:hover:text-amber-400"
+                        }`}
+                      >
+                        <svg className="w-4 h-4" fill={item.inUse ? "currentColor" : "none"} stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); deleteItem(item.id); }}
+                        className="text-red-400 hover:text-red-500 p-0.5 flex-shrink-0 transition"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                   {item.labels && item.labels.length > 0 && (
                     <div className="flex flex-wrap gap-1 mb-1">
